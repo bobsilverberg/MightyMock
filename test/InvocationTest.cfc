@@ -159,9 +159,9 @@ function tearDown(){
 }
 
 function setUp(){
-  mock = createObject('component','expando.MightyMock');
+  mock = createObject('component','mightymock.MightyMock');
   reg = mock._$getRegistry();
-  mr = createObject('component','expando.MockRegistry');
+  mr = createObject('component','mightymock.MockRegistry');
 }
 </cfscript>
 

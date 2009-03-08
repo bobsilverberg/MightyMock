@@ -110,7 +110,7 @@ function howToHandlePatternVerification(){
 
 
   function setUp(){
-    mock = createObject('component','expando.MightyMock').init('verify.me');
+    mock = createObject('component','mightymock.MightyMock').init('verify.me');
   }
 
   function tearDown(){

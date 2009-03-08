@@ -2,15 +2,31 @@
 <cfscript>
 
 function peepVerifyOnceFailure(){
-  verifier.verify( 'once', 1, 'foo', args, mr );
+  try{
+   verifier.verify( 'once', 1, 'foo', args, mr );
+   }
+   catch(mxunit.exception.AssertionFailedError e){
+   debug(e);
+  }
 }
 
 function peepVerifyAtLeastFailure(){
-  verifier.verify( 'atleast', 1, 'foo', args, mr );
+  try{
+   verifier.verify( 'atleast', 1, 'foo', args, mr );
+   }
+   catch(mxunit.exception.AssertionFailedError e){
+   debug(e);
+  }
 }
 
 function peepInvalidRule(){
-  verifier.verify( 'asdasd', 1, 'foo', args, mr );
+  try{
+  	verifier.verify( 'asdasd', 1, 'foo', args, mr );
+  	fail('should not get here');
+  }
+  catch(InvalidRuleException e){
+   debug(e);
+  }
 }
 
   function testVerifyOnce() {
@@ -106,8 +122,8 @@ function testVerifyNever(){
 
 
   function setUp(){
-    verifier = createObject('component','expando.Verfier');
-    mr = createObject('component','expando.MockRegistry');
+    verifier = createObject('component','mightymock.Verfier');
+    mr = createObject('component','mightymock.MockRegistry');
   }
 
   function tearDown(){

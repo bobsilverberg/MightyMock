@@ -1,6 +1,6 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
-matcher = createObject('component','expando.ArgumentMatcher');
+matcher = createObject('component','mightymock.ArgumentMatcher');
 
 
 function testType(){

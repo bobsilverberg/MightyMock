@@ -64,7 +64,7 @@ function whatHappensIf(){
 
 
   function setUp(){
-   mock = createObject('component','expando.MightyMock').init('my.mock');
+   mock = createObject('component','mightymock.MightyMock').init('my.mock');
   }
 
   function tearDown(){

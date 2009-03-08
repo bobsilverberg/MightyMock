@@ -9,7 +9,7 @@
     x = xmlnew();
     x.xmlRoot = XmlElemNew(x,"MyRoot");
 
-    mock = createObject('component','expando.MightyMock').init('my.mock');
+    mock = createObject('component','mightymock.MightyMock').init('my.mock');
 
 
 </cfscript>

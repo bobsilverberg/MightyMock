@@ -269,7 +269,7 @@ function isPatternShouldReturnFalseOnLiteral(){
 
 
   function setUp(){
-    mr = createObject('component','expando.MockRegistry');
+    mr = createObject('component','mightymock.MockRegistry');
   }
 
   function tearDown(){

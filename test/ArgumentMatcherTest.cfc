@@ -2,7 +2,7 @@
 <cfscript>
 
 function setUp(){
- matcher = createObject('component','expando.ArgumentMatcher');
+ matcher = createObject('component','mightymock.ArgumentMatcher');
 }
 
 
