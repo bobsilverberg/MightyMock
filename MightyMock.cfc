@@ -108,6 +108,15 @@
    return this;
   }
 
+  
+  function debugMock(){
+    var mockBug = {};
+    structInsert(mockBug, 'MockRegistry', registry.getRegistry());
+    structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
+    structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
+	structInsert(mockBug, 'RegistryArgMap' , registry.argMap); 
+    return mockBug;
+  }
 
 //Not sure about this and the coupling
   function verify(){
