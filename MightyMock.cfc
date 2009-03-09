@@ -12,7 +12,12 @@
  function init(name){
    getMetaData(this).name = name;
    getMetaData(this).fullname = name;
+   if(arguments.size()==2) setSpy(arguments[2]);
    return this;
+ }
+
+ function setSpy(iSpy){
+  spy = arguments.iSpy;
  }
 
  function onMissingMethod(target,args){
@@ -146,6 +151,7 @@
 registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
 verifier = createObject('component','Verfier');
+spy = chr(0); //used if creating a partial mock.
 
 tempRule = []; //tech debt for verfier...
 
