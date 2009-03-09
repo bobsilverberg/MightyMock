@@ -14,9 +14,11 @@
    
    
        
-    unMocked = spy.leaveMeAlone(); //execute unmocked method
+    unMocked = spy.leaveMeAlone(1); //execute unmocked method
     debug(unMocked);
     assertEquals('Leave me alone', unMocked);
+    
+    
     
     pSpy = spy.parentSpy(); //execute unmocked method on parent
     pSpy = spy.parentSpy();
@@ -50,7 +52,7 @@
    
     e = evaluate( '#oName#.#method#(argumentCollection=args)'  );
     debug(e);
-    e = evaluate( 'realspy.mockMe(argumentCollection=args)'  );
+    e = evaluate( 'realspy.mockMe()'  );
     debug(e);
   }
   
@@ -63,8 +65,7 @@
   
   
   function testCreateBadSpy(){
-   
-    try{
+   try{
      spy = createObject('component','mightymock.MightyMock').init('bogus.spy',true);
      fail('should not get here');
     }

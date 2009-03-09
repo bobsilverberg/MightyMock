@@ -60,10 +60,17 @@
        else{
          _$setState('executing');
          try{
-           temp = evaluate('spy.#target#()');	
+           if (structIsEmpty(args)){
+             temp = evaluate('spy.#target#()');
+           }
+           else{
+             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!
+           }
+           
            registry.addInvocationRecord(target,args,'ok'); //record call to spy
          }
          catch(any e){
+           _$throw(e.type & '_asd',e.getMessage(),e.getDetail());
            registry.addInvocationRecord(target,args,'error'); //record call to spy
          }
          return temp;
@@ -199,6 +206,9 @@
    return spy;
   }
 
+
+  
+  
 /*------------------------------------------------------------------------------
                           Private Instance Members
 ------------------------------------------------------------------------------*/
