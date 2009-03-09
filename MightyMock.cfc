@@ -10,9 +10,13 @@
 
 
  function init(name){
+   var localSpy = '';
    getMetaData(this).name = name;
    getMetaData(this).fullname = name;
-   if(arguments.size()==2) setSpy(arguments[2]);
+   if(arguments.size()==2) {
+     localSpy = createObject('component',arguments[2]); //need to implement initParams
+     setSpy(localSpy);
+   }
    return this;
  }
 
@@ -35,8 +39,12 @@
        t = registry.findByPattern(target,args);
        return _$invokeMock(t['target'],t['args']);
       }
-     catch(MismatchedArgumentPatternException e){}
+      catch(MismatchedArgumentPatternException e){}
+
+      //if spy != '' ...
+      //register and execute?
      }
+
 
      currentState = states[2];
      registry.register(target,args); //could return id
@@ -44,11 +52,13 @@
      currentMethod['args'] = args;
      return this;
    }
+
    else{
     currentState = states[3];
     currentMethod = {};
     return _$invokeMock(target,args);
    }
+
    return '';
  }
 
@@ -104,9 +114,9 @@
    return this;
   }
 
-
+ //should delegate resets to object
   function reset(){
-    registry.registry =  queryNew('id,type,method,argid,returns,throws');
+    registry.registry =  queryNew('id,type,method,argid,returns,throws,time');
 	  registry.invocationRecord =  queryNew('id,time,status');
 	  registry.registryDataMap = {};
 	  registry.argMap = {};
