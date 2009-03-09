@@ -136,6 +136,13 @@
   function getRegistry(){
    return this.registry;
   }
+  
+  function reset(){
+    registry =  queryNew('id,type,method,argid,returns,throws,time');
+	invocationRecord =  queryNew('id,time,status');
+	registry.registryDataMap = {};
+	registry.argMap = {};
+  }
 	</cfscript>
 
 <cffunction name="getInvocationRecordsById">

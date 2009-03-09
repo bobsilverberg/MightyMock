@@ -30,7 +30,7 @@
        calls = mockReg.getInvocationRecordsById(target,args).recordCount;
        details &= '
       Expected #target#( w/#args.size()# arguments ) to be verfied using rule
-      "#ucase(argrule)#" : #expected# time(s), but #target#s was actually called #calls# time(s).
+      "#ucase(argrule)#" : #expected# time(s), but #target# was actually called #calls# time(s).
      ';
      _$throw(exceptionType,'Mock verification failed. ',details);
      }

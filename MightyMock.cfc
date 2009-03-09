@@ -13,9 +13,15 @@
    var localSpy = '';
    getMetaData(this).name = name;
    getMetaData(this).fullname = name;
-   if(arguments.size()==2) {
-     localSpy = createObject('component',arguments[2]); //need to implement initParams
+   if(arguments.size()>1) {
+   try{
+     localSpy = createObject('component',arguments[1]); //need to implement initParams
      setSpy(localSpy);
+   }
+   catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
+     _$throw('InvalidSpyException',e.getMessage(),e.getDetail());
+   }
+        
    }
    return this;
  }
@@ -26,8 +32,9 @@
 
  function onMissingMethod(target,args){
    var t = chr(0);
+   var temp = '';
 
-   if(currentState == states[4]){
+   if( currentState == 'verifying'){ 
       verifier.verify(tempRule[1], tempRule[2], target, args, registry);
       return this;
    }
@@ -40,13 +47,31 @@
        return _$invokeMock(t['target'],t['args']);
       }
       catch(MismatchedArgumentPatternException e){}
-
-      //if spy != '' ...
-      //register and execute?
      }
+     
 
+     if(isObject(spy)){
+       if(currentState == 'registering'){  //user did mock.register() to prevent execution
+         registry.register(target,args);  
+         currentMethod['name'] = target;
+         currentMethod['args'] = args;
+         return this;
+       }
+       else{
+         _$setState('executing');
+         try{
+           temp = evaluate('spy.#target#()');	
+           registry.addInvocationRecord(target,args,'ok'); //record call to spy
+         }
+         catch(any e){
+           registry.addInvocationRecord(target,args,'error'); //record call to spy
+         }
+         return temp;
+       }
+     }
+ 
 
-     currentState = states[2];
+     _$setState('registering');
      registry.register(target,args); //could return id
      currentMethod['name'] = target;
      currentMethod['args'] = args;
@@ -54,7 +79,7 @@
    }
 
    else{
-    currentState = states[3];
+    _$setState('executing');
     currentMethod = {};
     return _$invokeMock(target,args);
    }
@@ -65,7 +90,7 @@
 
   function returns(){
    var arg = '';
-   currentState = states[1];
+   _$setState('idle');
    if( arguments.size() ) arg = arguments[1];
    registry.updateRegistry(currentMethod['name'],currentMethod['args'],'returns',arg);
    return this;
@@ -81,7 +106,7 @@
   function verify(){
    var count = 0;
    var rule = '';
-   currentState = states[4];
+   _$setState('verifying');
 
    switch(arguments.size()){
 
@@ -114,18 +139,23 @@
    return this;
   }
 
- //should delegate resets to object
+
   function reset(){
-    registry.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	  registry.invocationRecord =  queryNew('id,time,status');
-	  registry.registryDataMap = {};
-	  registry.argMap = {};
-	  currentState = states[1];
+    registry.reset();
+	currentState = states[1];
     currentMethod = {};
     return this;
   }
 
-
+  function register(){
+   _$setState('registering');
+   return this;
+  }
+  
+  function mockSpy(){
+   register();
+   return this;
+  }
 
 
 /*------------------------------------------------------------------------------
@@ -152,7 +182,21 @@
   }
 
   function _$setState(state){
-   this.currentState = state;
+  	previousState = currentState;
+    currentState = state;
+  }
+  
+  function _$getState(){
+   return currentState;
+  }
+  
+  function _$getPreviousState(){
+   return previousState;
+  }
+  
+  
+  function _$getSpy(){
+   return spy;
   }
 
 /*------------------------------------------------------------------------------
@@ -161,19 +205,21 @@
 registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
 verifier = createObject('component','Verfier');
-spy = chr(0); //used if creating a partial mock.
 
-tempRule = []; //tech debt for verfier...
+spy = chr(0);     //used if creating a partial mock.
+
+tempRule = [];    //tech debt for verfier...
 
 states = [
  'idle',          // mock is waiting to be invoked
- 'registering',   // mock is registering (mocking) methods
+ 'registering',   // mock is registering methods
  'executing',     // mock is executing a mocked method
- 'verfying',
- 'error'
+ 'verifying',      // mock is verifying behavior
+ 'error'          // problem
 ];
 
 currentState = states[1];
+previousState = '';
 
 currentMethod = {};
 

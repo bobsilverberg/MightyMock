@@ -1,4 +1,4 @@
-<cfcomponent output="false">
+<cfcomponent output="true" extends="ParentSpyObject">
 <!---
   fixture for Spy or partial mock implementation.
 
@@ -7,14 +7,16 @@
  --->
 
   <cffunction name="init">
+    <cfargument name="args">  
     <cfreturn this />
   </cffunction>
 
-	<cffunction name="mockMe" access="public" output="false" returntype="Any">
-		<cfreturn 'I have not Been Mocked' />
+	<cffunction name="mockMe" access="public" output="true" returntype="Any">
+		<cfdump var="#arguments#">
+        <cfreturn 'I have not Been Mocked' />
 	</cffunction>
 
-	<cffunction name="leaveMeAlone" access="public" output="false" returntype="Any">
-		<cfreturn 'I should return' />
+	<cffunction name="leaveMeAlone" access="public" output="true" returntype="Any">
+		<cfreturn 'Leave me alone' />
 	</cffunction>
 </cfcomponent>
