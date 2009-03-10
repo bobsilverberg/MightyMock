@@ -10,7 +10,7 @@
      }
      */
 
-    q = order.getInvocations();
+    q = order.getExpectations();
     debug(q);
 
     assert (isQuery(q));
@@ -30,25 +30,52 @@
 
 
   function testOrder(){
-
+   /*
+      mock1.foo();
+      mock2.bar();
+      mock3.bah();
+      mock1.foo(1);
+   */
+   
+    //define order:
     order.foo().
-     			bar().
-     			bah().
-     			verify();
+          bar().
+     	  verify();
 
+    q = order.getExpectations();
+    orderedList  = valueList( q.method );
+    
+    errorMessage = 'Expected methods to be called in this order: #orderedList#. ';
+    errorDetails = '';
+      
     debug('this will go into order.verify()');
-
+    debug(q);
     list = order.getOrderedList();
+    
     for(i=1; i <= list.size(); i++){
-      debug( list[i] );
-      next = list[i+1];
-      thisTime = order.getInvocationTime(list[i]);
-      nextTime = order.getInvocationTime(list[i+1]);
-      debug(thisTime);
-      debug(nextTime);
+      current = list[i];    
+      //what if it's not there? fail(...)
+      thisTime = order.getInvocationTime(current);
+      
+      if(i < list.size()){
+       next = list[i+1];
+       nextTime = order.getInvocationTime(next);
+      }      
+      else {
+        nextTime = -1;
+      }
+      debug('thisTime: ' & current & ' : ' & thisTime);
+      debug('nextTime: ' & next & ' : ' & nextTime);
+     // if(nextTime == -1) ; we're done
+      
+      if(nextTime < thisTime){
+      	//collect first, then check ...
+       // __throw(' #current# was called out of order.', 'Expected:#orderedList#. current=#current#, next=#next#');
+        errorDetails &= 'Caught : #current# was called before #next# ';
+      }
     }
-
-
+  
+    if(len(errorDetails)) __throw(errorMessage, errorDetails);
 
   }
 
@@ -77,4 +104,11 @@
 
 
 </cfscript>
+
+
+<cffunction name="__throw">
+ <cfargument name="message" />
+ <cfargument name="detail" />
+ <cfthrow type="mxunit.exception.AssertionFailedError" message="#arguments.message#" detail="#arguments.detail#" />
+</cffunction>
 </cfcomponent>

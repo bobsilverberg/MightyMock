@@ -31,7 +31,7 @@
     return this;
   }
 
-  function getInvocations(){
+  function getExpectations(){
    return invocations;
   }
 

@@ -33,7 +33,7 @@
  function onMissingMethod(target,args){
    var t = chr(0);
    var temp = '';
-
+sleep(1);
    if( currentState == 'verifying'){ 
       verifier.verify(tempRule[1], tempRule[2], target, args, registry);
       return this;
@@ -180,8 +180,9 @@
 
   function _$invokeMock(target,args){
     var behavior = registry.getRegisteredBehavior(target,args);
+    
     if(behavior == 'returns') return registry.getReturnsData(target,args);
-    if(behavior == 'throws') _$throw(registry.getReturnsData(target,args));
+    if(behavior == 'throws')  _$throw(registry.getReturnsData(target,args));
 
   }
 

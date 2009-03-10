@@ -126,7 +126,7 @@
 //invocation record smells like another object
  function addInvocationRecord(target,args,status){ //
     var id = id(target,args);
-    sleep(1);//ensure unique exect times
+    sleep(5);//ensures, fwiw, that the recorded time will be unique
     queryAddRow(this.invocationRecord,1);
     querySetCell(this.invocationRecord,'id',id);
     querySetCell(this.invocationRecord,'time', getTickCount());
