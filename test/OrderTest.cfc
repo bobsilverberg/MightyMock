@@ -18,12 +18,37 @@
   }
 
 
+  function testGetInvocationTime(){
+   var t = order.getInvocationTime('foo_3938');
+    order.foo().
+     			bar().
+     			bah();
+   debug( order.getOrderedList() );
+   debug(t);
+   assert( isnumeric(t) );
+  }
+
+
   function testOrder(){
 
     order.foo().
      			bar().
      			bah().
      			verify();
+
+    debug('this will go into order.verify()');
+
+    list = order.getOrderedList();
+    for(i=1; i <= list.size(); i++){
+      debug( list[i] );
+      next = list[i+1];
+      thisTime = order.getInvocationTime(list[i]);
+      nextTime = order.getInvocationTime(list[i+1]);
+      debug(thisTime);
+      debug(nextTime);
+    }
+
+
 
   }
 
