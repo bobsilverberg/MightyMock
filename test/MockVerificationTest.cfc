@@ -1,23 +1,23 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function howToHandlePatternVerification(){
+  mock.foo('{string}').returns('asd');
+  mock.foo('asd');
+  mock.verify('times',1).foo('{string}');
+  //mock.verify('times',1).foo('asd');
+
+  fail('Record all literal invocations and add a column for pattern id if invoked via a pattern match.');
+}
+
 function testThatEmptyVerifyWorksTheSameAsTimesOne(){
   mock.foo(1).returns('bar');
   mock.foo(1);
   mock.verify().foo(1);
+  mock.verifyTimes(1).foo(1);
 }
 
 
-function testThatEmptyVerifyWorksMultipleTimes(){
-  mock.foo(1).returns('bar');
-  mock.foo(1);
-  mock.foo(1);
-  mock.foo(1);
-  mock.foo(1);
-  mock.foo(1);
-  mock.foo(1);
-  mock.verify().foo(1); //just verifies that foo(1) was called
-}
 
 
 function testThatMultipleInteractionsAndChainedVerifications(){
@@ -35,14 +35,14 @@ function testThatMultipleInteractionsAndChainedVerifications(){
 
   debug(mock._$debugInvoke());
 
- mock.verify('times',5).foo(1).
-      verify('times',2).bar('bar')  .
-      verify('never').foo('{struct}');
+ mock.verifyTimes(5).foo(1).
+      verifyTimes(2).bar('bar')  .
+      verifyNever().foo('{struct}');
 
 }
 
 
-function testThatMultipleChainedVerifications(){
+function testThatMultipleChainedVerificationsWork(){
   mock.foo(1).returns('bar');
 
   mock.foo(1);
@@ -52,10 +52,9 @@ function testThatMultipleChainedVerifications(){
   mock.foo(1);
   debug(mock._$debugInvoke());
 
- mock.verify('times',5).foo(1)   .
-      verify('atLeast',1).foo(1) .
-      verify('atMost',5).foo(1)  .
-      verify('count',5).foo(1);
+ mock.verifyTimes(5).foo(1).
+      verifyAtLeast(1).foo(1) .
+      verifyAtMost(5).foo(1)  ;
 
 }
 
@@ -83,7 +82,7 @@ function verifyCounts(){
 }
 
 function verifyNever(){
-  mock.verify('never').foo(1);
+  mock.verifyNever().foo(1);
 
 }
 
@@ -93,19 +92,11 @@ function verify25MockIterations(){
   for(i; i < 26; i++){
    mock.foo(1);
   }
-  mock.verify('count',25).foo(1);
+  mock.verifyTimes(25).foo(1);
  }
 
 
-function howToHandlePatternVerification(){
-  mock.foo('{string}').returns('asd');
-  mock.foo('asd');
-  mock.verify('times',1).foo('{string}');
-  //mock.verify('times',1).foo('asd');
 
-  fail('If verifying a pattern, should it include all matches?' &
-       'Maybe add a column for pattern id if invoked via a pattern match.');
-}
 
 
 

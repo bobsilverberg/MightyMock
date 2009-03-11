@@ -2,7 +2,7 @@
 	<cfscript>
 
 /*------------------------------------------------------------------------------
-      Public API. Any method NOT prefixed with _$ is considered public.
+      Public API. Any method NOT prefixed with _$ are considered public.
       All other methods are readily available, but will likely produce
       unexpected behavior if not used correctly.
 ------------------------------------------------------------------------------*/
@@ -44,6 +44,7 @@
 
      if (!registry.isPattern(args)){ //pee-yew!
       try{
+       //To Do: record the literal and invoke pattern behavior
        t = registry.findByPattern(target,args);
        return _$invokeMock(t['target'],t['args']);
       }
@@ -65,7 +66,7 @@
              temp = evaluate('spy.#target#()');
            }
            else{
-             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!
+             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!! To Do
            }
            
            registry.addInvocationRecord(target,args,'ok'); //record call to spy
@@ -110,25 +111,19 @@
   }
 
   
-  function debugMock(){
-    var mockBug = {};
-    structInsert(mockBug, 'MockRegistry', registry.getRegistry());
-    structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
-    structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
-	structInsert(mockBug, 'RegistryArgMap' , registry.argMap); 
-    return mockBug;
-  }
 
-//Not sure about this and the coupling
+
+/*-------------------------------------------------------------------------------------
+                            Method  Verifications
+-------------------------------------------------------------------------------------*/
+
   function verify(){
    _$setState('verifying');
     tempRule[1] = 'verifyOnce';
     tempRule[2] = 1;
    return this;
   }
-  
-  
-  
+    
   //Could put all this into onMissingMethod?
   function verifyTimes(count){
     _$setState('verifying');
@@ -159,6 +154,20 @@
     tempRule[1] = 'verifyNever';
     tempRule[2] = 0;
     return this;
+  }
+
+
+/*------------------------------------------------------------------------------
+                                Utils
+------------------------------------------------------------------------------*/
+
+  function debugMock(){
+    var mockBug = {};
+    structInsert(mockBug, 'MockRegistry', registry.getRegistry());
+    structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
+    structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
+	structInsert(mockBug, 'RegistryArgMap' , registry.argMap); 
+    return mockBug;
   }
 
 
@@ -235,7 +244,7 @@ verifier = createObject('component','Verifier');
 spy = chr(0);     //used if creating a partial mock.
 
 tempRule = [];    //tech debt for verfier
-tempCount = 0;    //used for verification
+
 
 states = [
  'idle',          // mock is waiting to be invoked

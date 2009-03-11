@@ -8,7 +8,7 @@
 	  }
 
 	  this.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	  this.invocationRecord =  queryNew('id,time,status');
+	  this.invocationRecord =  queryNew('id,time,status,pattern');
 	  this.registryDataMap = {};
 	  this.argMap = {};
 
@@ -69,6 +69,10 @@
 
   function getReturnsData(target,args){
     var id = id(target,args);
+    //To Do: !!
+    /*
+      Record the literal reference and associated pattern.
+    */
     addInvocationRecord(target,args,'ok');
     return this.registryDataMap['behaviordata_' & id];
   }
@@ -131,6 +135,7 @@
     querySetCell(this.invocationRecord,'id',id);
     querySetCell(this.invocationRecord,'time', getTickCount());
     querySetCell(this.invocationRecord,'status',status);
+    querySetCell(this.invocationRecord,'pattern','');
  }
 
   function getRegistry(){
@@ -139,7 +144,7 @@
   
   function reset(){
     this.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	this.invocationRecord =  queryNew('id,time,status');
+	this.invocationRecord =  queryNew('id,time,status,pattern');
 	this.registryDataMap={};
 	this.argMap = {};
   }
