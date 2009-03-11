@@ -2,14 +2,14 @@
 <cfscript>
  this.mocks = [];
  invocations = chr(0);
- orderedList = [];//(1);
+ expectations = [];//(1);
  index = 1;
  mr = createObject('component','MockRegistry');
 
 
  function onMissingMethod(target,args){
     var id = mr.id(target,args);
-    orderedList[index++] = id;
+    expectations[index++] = id;
     return this;
  }
 
@@ -31,8 +31,12 @@
     return this;
   }
 
+  function getInvocations(){
+    return invocations;
+  }
+
   function getExpectations(){
-   return invocations;
+   return expectations;
   }
 
   function merge(){
@@ -53,6 +57,15 @@
   }
 
 </cfscript>
+
+<cffunction name="exists" returntype="boolean">
+  <cfargument name="id" type="string" />
+  <cfquery name="q" dbtype="query" maxrows="1">
+    select count(*) as cnt
+    from invocations where id = '#id#'
+  </cfquery>
+  <cfreturn q.cnt eq 1 >
+</cffunction>
 
 <cffunction name="_$query" access="private">
   <cfargument name="qs" type="string" />
