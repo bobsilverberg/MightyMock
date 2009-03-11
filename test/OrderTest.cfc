@@ -2,6 +2,10 @@
 <cfscript>
 
 
+ function $verify(){
+   fail('wrap up in verify in Order');
+ }
+
   function $toDo(){
    order.one().two().three().verifyExact();
    order.one().three().verifyRange();
