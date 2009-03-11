@@ -138,10 +138,10 @@
   }
   
   function reset(){
-    registry =  queryNew('id,type,method,argid,returns,throws,time');
-	invocationRecord =  queryNew('id,time,status');
-	registry.registryDataMap = {};
-	registry.argMap = {};
+    this.registry =  queryNew('id,type,method,argid,returns,throws,time');
+	this.invocationRecord =  queryNew('id,time,status');
+	this.registryDataMap={};
+	this.argMap = {};
   }
 	</cfscript>
 

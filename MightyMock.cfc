@@ -33,9 +33,10 @@
  function onMissingMethod(target,args){
    var t = chr(0);
    var temp = '';
-sleep(1);
+
    if( currentState == 'verifying'){ 
-      verifier.verify(tempRule[1], tempRule[2], target, args, registry);
+      verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
+      _$setState('idle');
       return this;
    }
 
@@ -120,39 +121,44 @@ sleep(1);
 
 //Not sure about this and the coupling
   function verify(){
-   var count = 0;
-   var rule = '';
    _$setState('verifying');
-
-   switch(arguments.size()){
-
-     case 0:
-      tempRule[1] = 'atLeast';
-      tempRule[2] = 1;
-     break;
-
-     case 1:
-      if(arguments[1] == 'once') {
-		    tempRule[1] = arguments[1];
-		    tempRule[2] = 1;
-		   }
-		   else if(arguments[1] == 'never'){
-		    tempRule[1] = arguments[1];
-		    tempRule[2] = 0;
-		   }
-		   else{
-		    _$throw("NoSuchRuleException", arguments[1]);
-		   }
-     break;
-
-     default:
-      tempRule[1] = arguments[1];
-      tempRule[2] = arguments[2];
-     break;
-
-
-   }
+    tempRule[1] = 'verifyOnce';
+    tempRule[2] = 1;
    return this;
+  }
+  
+  
+  
+  //Could put all this into onMissingMethod?
+  function verifyTimes(count){
+    _$setState('verifying');
+    tempRule[1] = 'verifyTimes';
+    tempRule[2] = arguments.count;
+    return this;
+  }
+  function verifyAtLeast(count){
+    _$setState('verifying');
+    tempRule[1] = 'verifyAtLeast';
+    tempRule[2] = arguments.count;
+    return this;
+  }
+  function verifyAtMost(count){
+     _$setState('verifying');
+    tempRule[1] = 'verifyAtMost';
+    tempRule[2] = arguments.count;
+    return this;
+  }
+  function verifyOnce(){
+    _$setState('verifying');
+    tempRule[1] = 'verifyOnce';
+    tempRule[2] = 1;
+    return this;
+  }
+  function verifyNever(){
+     _$setState('verifying');
+    tempRule[1] = 'verifyNever';
+    tempRule[2] = 0;
+    return this;
   }
 
 
@@ -224,11 +230,12 @@ sleep(1);
 ------------------------------------------------------------------------------*/
 registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
-verifier = createObject('component','Verfier');
+verifier = createObject('component','Verifier');
 
 spy = chr(0);     //used if creating a partial mock.
 
-tempRule = [];    //tech debt for verfier...
+tempRule = [];    //tech debt for verfier
+tempCount = 0;    //used for verification
 
 states = [
  'idle',          // mock is waiting to be invoked

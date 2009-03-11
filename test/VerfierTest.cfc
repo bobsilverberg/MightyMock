@@ -1,9 +1,29 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function doVerifyShouldExecuteTargets(){
+  mr.addInvocationRecord('foo',args,'ok');
+  verifier.doVerify('verifyTimes', 'foo', args, 1, mr );
+  
+  verifier.doVerify('verifyAtLeast', 'foo', args, 1, mr );
+  
+  verifier.doVerify('verifyAtMost', 'foo', args, 1, mr );
+  
+  verifier.doVerify('verifyNever', 'bah', args, 0, mr );
+  
+  verifier.doVerify('verifyOnce', 'foo', args, 1, mr );
+  
+}
+
+
+function testNewVerifyTimes(){
+    mr.addInvocationRecord('foo',args,'ok');
+    verifier.verifyTimes( 1, 'foo', args, mr );
+}
+
 function peepVerifyOnceFailure(){
   try{
-   verifier.verify( 'once', 1, 'foo', args, mr );
+    verifier.verifyOnce('foo', args, mr );
    }
    catch(mxunit.exception.AssertionFailedError e){
    debug(e);
@@ -12,26 +32,18 @@ function peepVerifyOnceFailure(){
 
 function peepVerifyAtLeastFailure(){
   try{
-   verifier.verify( 'atleast', 1, 'foo', args, mr );
+   verifier.verifyAtleast(1, 'foo', args, mr );
    }
    catch(mxunit.exception.AssertionFailedError e){
    debug(e);
   }
 }
 
-function peepInvalidRule(){
-  try{
-  	verifier.verify( 'asdasd', 1, 'foo', args, mr );
-  	fail('should not get here');
-  }
-  catch(InvalidRuleException e){
-   debug(e);
-  }
-}
+
 
   function testVerifyOnce() {
     mr.addInvocationRecord('foo',args,'ok');
-    r = verifier.verify( 'once', 1, 'foo', args, mr );
+    r = verifier.verifyOnce('foo', args, mr );
     debug(r);
     assert(r);
   }
@@ -41,7 +53,7 @@ function testVerifyTimes(){
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
-  r = verifier.verify( 'times', 4, 'foo', args, mr );
+  r = verifier.verifyTimes( 4, 'foo', args, mr );
   debug(r);
   assert(r);
 
@@ -52,7 +64,7 @@ function testVerifyPeriodically(){
  var i = 1;
   for(i; i < 20; i++){
    mr.addInvocationRecord('foo',args,'ok');
-   r = verifier.verify( 'times', i, 'foo', args, mr );
+   r = verifier.verifyTimes(i, 'foo', args, mr );
    assert(r);
   }
 
@@ -63,7 +75,7 @@ function testVerifyPeriodically(){
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
-  r = verifier.verify( 'count', 4, 'foo', args, mr );
+  r = verifier.verifyTimes( 4, 'foo', args, mr );
   debug(r);
   assert(r);
 
@@ -75,14 +87,14 @@ function testVerifyPeriodically(){
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
-  r = verifier.verify( 'atLeast', 4, 'foo', args, mr );
+  r = verifier.verifyAtLeast(4, 'foo', args, mr );
   assert(r);
   debug(r);
-  r = verifier.verify( 'atLeast', 1, 'foo', args, mr );
+  r = verifier.verifyAtLeast(1, 'foo', args, mr );
   assert(r);
 
   try{
-   r = verifier.verify( 'atLeast', 5, 'foo', args, mr );
+   r = verifier.verifyAtLeast(5, 'foo', args, mr );
    assert(r);
   }
   catch(mxunit.exception.AssertionFailederror e){}
@@ -94,11 +106,11 @@ function testVerifyPeriodically(){
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
   mr.addInvocationRecord('foo',args,'ok');
-  r = verifier.verify( 'atMost', 12, 'foo', args, mr );
+  r = verifier.verifyAtMost( 12, 'foo', args, mr );
   assert(r);
 
   try{
-   r = verifier.verify( 'atMost', 5, 'foo', args, mr );
+   r = verifier.verifyAtMost( 5, 'foo', args, mr );
    assert(r);
   }
   catch(mxunit.exception.AssertionFailederror e){}
@@ -107,13 +119,13 @@ function testVerifyPeriodically(){
 
 
 function testVerifyNever(){
-  r = verifier.verify( 'never', 0, 'foo', args, mr );
+  r = verifier.verifyNever('foo', args, mr );
   assert(r);
   debug(r);
 
   mr.addInvocationRecord('foo',args,'ok');
   try{
-   r = verifier.verify( 'never', 0, 'foo', args, mr );
+   r = verifier.verifyNever('foo', args, mr );
    assert(r);
   }
   catch(mxunit.exception.AssertionFailederror e){}
@@ -122,7 +134,7 @@ function testVerifyNever(){
 
 
   function setUp(){
-    verifier = createObject('component','mightymock.Verfier');
+    verifier = createObject('component','mightymock.Verifier');
     mr = createObject('component','mightymock.MockRegistry');
   }
 

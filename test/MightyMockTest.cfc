@@ -2,21 +2,48 @@
 <cfscript>
 
 function clearOrResetMock(){
- mock.foo('asd').returns('asd');
- debug(mock._$debugReg() );
- mock.reset();
- debug(mock._$debugReg() );
+  mock.foo('asd').returns('asd');
+  mock.foo('asd');
+  debug(mock.debugMock() );
+  mock.reset();
+  reg = mock._$getRegistry();
+  debug(reg.invocationRecord);
+  assert( reg.invocationRecord.recordCount == 0, 'invocation records still there' );
+  assert( reg.registry.recordCount == 0, 'registry items still there' );
+  
 }
 
 
 function simpleVerifyTest(){
  mock.foo('asd').returns('asd');
- mock.foo('asd');
- mock.verify().foo('asd');
- mock.verify().foo('asd'); //synonym
 
+ mock.foo('asd');
+ mock.verifyTimes(1).foo('asd');
+
+
+ mock.foo2('asd').returns('123');
+ mock.foo2('asd');
+ mock.verify().foo2('asd');
+
+ 
+ mock.verifyAtLeast(1).foo('asd');
+
+ 
+  mock.foo2('asd');
+  mock.foo2('asd');
+  debug( mock.debugMock() );
+  mock.verifyAtMost(3).foo2('asd');
+  
+  mock.verifyNever().xxx('asd');
+  
+  mock.bling(a).returns(true);
+  mock.bling(a);
+  mock.verifyOnce().bling(a);
+  
 
 }
+
+
 
 function whatHappensIf(){
  mock.foo('asd');
