@@ -2,6 +2,12 @@
 <cfscript>
 
 
+  function $toDo(){
+   order.one().two().three().verifyExact();
+   order.one().three().verifyRange();
+   fail('to do');
+  }
+
 
   function testGetInvocationTime(){
    var t = order.getInvocationTime('one_3938');
@@ -15,6 +21,10 @@
 
 
 function FailWhenExpectationsAreNotMet(){
+
+     debug('This does what is expected, but not wrapped in try catch cause I''m too tired tonight ...');
+
+
      order.one().
            two().
            four().
