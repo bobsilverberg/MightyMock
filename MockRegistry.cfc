@@ -2,9 +2,9 @@
   <cfscript>
 
 	  matcher = createObject('component','ArgumentMatcher');
-	  //from door injection
+
 	  function setMatcher(m){
-	   matcher = arguments.m;
+      matcher = arguments.m;
 	  }
 
 	  this.registry =  queryNew('id,type,method,argid,returns,throws,time');
@@ -141,7 +141,7 @@
   function getRegistry(){
    return this.registry;
   }
-  
+
   function reset(){
     this.registry =  queryNew('id,type,method,argid,returns,throws,time');
 	this.invocationRecord =  queryNew('id,time,status,pattern');

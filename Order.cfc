@@ -5,11 +5,16 @@
  expectations = [];//(1);
  index = 1;
  mr = createObject('component','MockRegistry');
+ exceptionType = 'mxunit.exception.AssertionFailedError';
 
 
  function onMissingMethod(target,args){
     var id = mr.id(target,args);
-    expectations[index++] = id;
+    var expectation = {};
+    expectation['id'] = id;
+    expectation['name'] = target;
+    expectation['args'] = args;
+    expectations[index++] = expectation;
     return this;
  }
 
@@ -18,10 +23,43 @@
  }
 
  function verify(){
-  // loop over expectations and see where those
-  // fall within the invocations
-  return this;
- }
+   var expectations = getExpectations();
+   var invocations  = getInvocations();
+   var orderedList  = valueList( invocations.method );
+   var currentExpectation = '';
+   var currentExpectationTime = '';
+   var nextExpectation = '';
+   var nextExpectationTime = '';
+   var numberOfExpectations = expectations.size();
+
+   for(i=1; i <= numberOfExpectations; i++){
+	        currentExpectation = expectations[i];
+	        //debug(currentExpectation);
+	        if(!exists(currentExpectation['id'])){
+	          _$throw(exceptionType,'#currentExpectation["name"]#() not found in invocation list.',
+	                                'To Do: Print list of methods' );
+	        }
+
+	       if(i < numberOfExpectations) {
+	          nextExpectation = expectations [i+1];
+	          if(!exists(nextExpectation['id'])){
+	           _$throw(exceptionType,'#nextExpectation["name"]#() not found in invocation list.',
+	                                 'To Do: Print list of methods' );
+	          }
+
+           currentExpectationTime = getInvocationTime(currentExpectation['id']);
+	         nextExpectationTime = getInvocationTime(nextExpectation['id']);
+
+	         if(currentExpectationTime > nextExpectationTime ) {
+	           _$throw(exceptionType, 'Expectation Failure : #currentExpectation["name"]#() invoked AFTER #nextExpectation["name"]#().',
+	                                  'Actual invocation sequence was "#printPrettyOrderedList(orderedList)#", but expectations were defined as #prettyPrintExpectations()#' );
+	         }
+
+	        }
+	     }//end for
+
+	  return this;
+	 }
 
   function init(){
 		for(item in arguments){
@@ -56,6 +94,30 @@
     return invocations;
   }
 
+
+ function printPrettyOrderedList(list){
+  var s = '';
+  var i = 1;
+  for(i; i <= listLen(list); i++){
+     s &= listGetAt(list,i) & '()';
+     if(i < listLen(list) ) s &= ',';
+  }
+  return s;
+ }
+
+ function prettyPrintExpectations(){
+  var item = '';
+  var s = '';
+  var expect = {};
+  var i = 1;
+  for(i; i <= expectations.size(); i++){
+   expect = expectations[i];
+   s &= expect['name'] & '()';
+   if(i < expectations.size() ) s &= ',';
+  }
+  return s;
+ }
+
 </cfscript>
 
 <cffunction name="exists" returntype="boolean">
@@ -81,6 +143,13 @@
     select [time] from invocations where id = '#id#'
   </cfquery>
   <cfreturn q['time'] />
+</cffunction>
+
+<cffunction name="_$throw">
+	<cfargument name="type" required="false" default="mxunit.exception.AssertionFailedError">
+	<cfargument name="message" required="false" default="failed behaviour">
+	<cfargument name="detail" required="false" default="Details details ...">
+  <cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#" />
 </cffunction>
 
 </cfcomponent>
