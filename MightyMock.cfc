@@ -267,7 +267,6 @@ currentMethod = {};
   <cfdump var="#arguments[1]#">
 </cffunction>
 
-
 <cffunction name="_$throw">
 	<cfargument name="type" required="false" default="mxunit.exception.AssertionFailedError">
 	<cfargument name="message" required="false" default="Failed Mock Behaviour">

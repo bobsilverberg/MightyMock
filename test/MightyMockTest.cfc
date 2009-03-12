@@ -1,6 +1,22 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function $mockShouldBeAbleToReturnOtherMock(){
+   mock.reset();
+   mock2 = createObject('component','mightymock.MightyMock').init('mockery');
+   mock.foo('asd').returns(mock2);
+   t = mock.foo('asd');
+   debug(t);
+   assertIsTypeOf(t,'mockery');
+}
+
+function methodShouldBeAbleToReturnObject(){
+   mock.reset();
+   mock.foo('asd').returns(this);
+   t = mock.foo('asd');
+   assertIsTypeOf(t,'WEB-INF.cftags.component');
+}
+
 function clearOrResetMock(){
   mock.foo('asd').returns('asd');
   mock.foo('asd');

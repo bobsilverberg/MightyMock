@@ -55,10 +55,12 @@
     var rowNum = getRowNum(target,args);
     var id = id(target,args);
     var mapId = 'behaviordata_' & id;
-    if(value.toString() == '{undefined}'){
-      this.registryDataMap.remove(mapId);
-      querySetCell(getRegistry(),column, value, rowNum);
-    }
+    if(isSimpleValue(value) ){
+	    if(value.toString() == '{undefined}'){
+	      this.registryDataMap.remove(mapId);
+	      querySetCell(getRegistry(),column, value, rowNum);
+	    }
+	}
     else{
     this.registryDataMap[mapId] = value;
     querySetCell(getRegistry(),column, mapId, rowNum);
