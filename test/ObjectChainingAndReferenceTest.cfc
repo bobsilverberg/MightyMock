@@ -28,8 +28,40 @@
    --->
 <cfscript>
 
+  function testRegisterMockAsCollaboratorParameter(){
+     foo = $.create('foo');
+     bar = $.create('bar');
 
-  function testThis() {
+     foo.setBar('i see the light').returns(bar);
+     foo.asd(bar).returns('asd');
+     //foo.getBar().returns(bar);
+
+     debug(foo.debugMock());
+     debug(bar.debugMock());
+
+     assertEquals( 1,1 );
+
+  }
+
+  function testDeepChainedCollaborators(){
+     foo = $.create('foo');
+     bar = $.create('bar');
+
+     foo.setBar(bar).returns(chr(0));
+     foo.getBar().returns(bar);
+
+     debug(foo.debugMock());
+     debug(bar.debugMock());
+
+     foo.setBar(bar);
+     b = foo.getBar();
+
+     debug(b);
+
+  }
+
+
+  function testLoggerFAIL() {
 
      esapi = $.create('org.owasp.esapi.ESAPI');
      esapi.reset();

@@ -21,7 +21,7 @@
    catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
      _$throw('InvalidSpyException',e.getMessage(),e.getDetail());
    }
-        
+
    }
    return this;
  }
@@ -34,7 +34,7 @@
    var t = chr(0);
    var temp = '';
 
-   if( currentState == 'verifying'){ 
+   if( currentState == 'verifying'){
       verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
       _$setState('idle');
       return this;
@@ -50,11 +50,11 @@
       }
       catch(MismatchedArgumentPatternException e){}
      }
-     
+
 
      if(isObject(spy)){
        if(currentState == 'registering'){  //user did mock.register() to prevent execution
-         registry.register(target,args);  
+         registry.register(target,args);
          currentMethod['name'] = target;
          currentMethod['args'] = args;
          return this;
@@ -68,7 +68,7 @@
            else{
              temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!! To Do
            }
-           
+
            registry.addInvocationRecord(target,args,'ok'); //record call to spy
          }
          catch(any e){
@@ -78,7 +78,7 @@
          return temp;
        }
      }
- 
+
 
      _$setState('registering');
      registry.register(target,args); //could return id
@@ -110,7 +110,7 @@
    return this;
   }
 
-  
+
 
 
 /*-------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@
     tempRule[2] = 1;
    return this;
   }
-    
+
   //Could put all this into onMissingMethod?
   function verifyTimes(count){
     _$setState('verifying');
@@ -166,14 +166,14 @@
     structInsert(mockBug, 'MockRegistry', registry.getRegistry());
     structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
     structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
-	structInsert(mockBug, 'RegistryArgMap' , registry.argMap); 
+	  structInsert(mockBug, 'RegistryArgMap' , registry.argMap);
     return mockBug;
   }
 
 
   function reset(){
     registry.reset();
-	currentState = states[1];
+	  currentState = states[1];
     currentMethod = {};
     return this;
   }
@@ -182,7 +182,7 @@
    _$setState('registering');
    return this;
   }
-  
+
   function mockSpy(){
    register();
    return this;
@@ -195,7 +195,7 @@
 
   function _$invokeMock(target,args){
     var behavior = registry.getRegisteredBehavior(target,args);
-    
+
     if(behavior == 'returns') return registry.getReturnsData(target,args);
     if(behavior == 'throws')  _$throw(registry.getReturnsData(target,args));
 
@@ -217,23 +217,23 @@
   	previousState = currentState;
     currentState = state;
   }
-  
+
   function _$getState(){
    return currentState;
   }
-  
+
   function _$getPreviousState(){
    return previousState;
   }
-  
-  
+
+
   function _$getSpy(){
    return spy;
   }
 
 
-  
-  
+
+
 /*------------------------------------------------------------------------------
                           Private Instance Members
 ------------------------------------------------------------------------------*/
