@@ -1,4 +1,4 @@
-<cfcomponent displayname="Logger" output="false">
+<cfcomponent displayname="Logger" output="true">
 	<cffunction name="init" access="public" returntype="Any" output="false">
 		<cfargument name="name" type="string" required="true" hint="Logger Name" />
 		<cfargument name="level" type="string" required="false" default="0" hint="The log level of this logger" />
@@ -43,11 +43,12 @@
 		<cfreturn variables.levelVal />
 	</cffunction>
 
-	<cffunction name="trace" access="public" returntype="void" output="false">
+	<cffunction name="trace" access="public" returntype="any" output="true">
 		<cfargument name="message" type="string" required="true" hint="The message to log">
 
 		<cfif isTraceEnabled()>
-			<cfset logEntry("TRACE", arguments.message) />
+			<cfset u = logEntry("TRACE", arguments.message) />
+      <cfreturn u />
 		</cfif>
 	</cffunction>
 
@@ -129,7 +130,14 @@
 		</cftry>
 	</cffunction>
 
-	<cffunction name="logEntry" access="private" returntype="void" output="false">
+   <cffunction name="logTest" hint="testing sanity check ... that's it.">
+    <cfargument name="type">
+    <cfargument name="message">
+    <cfset var userSessionLoggingID = variables.ESAPI.sessionFacade().getProperty("loggingID") />
+    <cfreturn userSessionLoggingID />
+   </cffunction>
+
+	<cffunction name="logEntry" access="public" returntype="any" output="true">
 		<cfargument name="type" type="String" required="true" hint="The log type that was used (i.e. INFO, DEBUG)">
 		<cfargument name="message" type="string" required="false" default="No Message Passed" />
 
@@ -140,17 +148,14 @@
 		<!--- Get the sessions unique logging ID (We don't use the sessionID because it can be used for session hijaking) --->
 		<cfset var userSessionLoggingID = variables.ESAPI.sessionFacade().getProperty("loggingID") />
 
-
-
-		<!--- Get the current User
+		<!--- Get the current User   --->
 		<cfset var user = variables.ESAPI.authenticator().getCurrentUser() />
+   
 
 		<!--- Set a local variable to hold ColdFusions non-standard log levels --->
-		<cfset var cfType = "" />
---->
-  <cfreturn  'hgf'/>
-	<!--- Just return for now .... --->
-
+		<cfset  var cfType = "" />
+ <cfset uname = user.getUserName() />
+  <cfreturn uname />
 
     <!--- Determine which non-standard CF Log Level to use --->
 		<cfswitch expression="#arguments.type#">
@@ -160,23 +165,33 @@
 			<cfdefaultcase><cfset cfType="information"></cfdefaultcase>
 		</cfswitch>
 
+
+  
+
 		<!--- Clean CRLF from the message --->
 		<cfset logMessage = replace(arguments.message,"\n", "_", "all") />
 		<cfset logMessage = replace(logMessage, "\r", "_", "all") />
 
-		<!--- If HTMLEncoding Log entries is required --->
-		<cfif variables.ESAPI.securityConfiguration().getProperty("LogEncodingRequired")>
-			<cfset clean = variables.ESAPI.encoder().encodeForHTML(logMessage) />
-			<cfif Compare(logMessage, clean)>
-				<cfset logMessage = clean & " (Encoded)" />
-			</cfif>
-		</cfif>
+
+
+    <!--- If HTMLEncoding Log entries is required --->
+    <cfif variables.ESAPI.securityConfiguration().getProperty("LogEncodingRequired")>
+      <cfset clean = variables.ESAPI.encoder().encodeForHTML(logMessage) />
+      <cfif Compare(logMessage, clean)>
+        <cfset logMessage = clean & " (Encoded)" />
+      </cfif>
+    </cfif>
+
+
+
 
 		<!--- Make log entry --->
-		<cflog type="#cfType#"
+		<cflog type="warn"
 			application="true"
 			file="security"
-			text="Level: #arguments.type# - Logger Name: #variables.name# - Username: #user.getUsername()# - Host: #user.getLastHostAddress()# - Session Logging ID: #userSessionLoggingID# - Message: #logMessage#" />
+			text="Level: #arguments.type# - Logger Name: #variables.name# - 
+            Username:  user.getUserName() - Host: user.getLastHostAddress() -
+            Session Logging ID: #userSessionLoggingID# - Message: logMessage" />
 
 	</cffunction>
 </cfcomponent>

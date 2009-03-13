@@ -50,31 +50,17 @@
    return this.argMap[id]; //where to catch undefined element exception? client?
   }
 
-//registry.updateRegistry(currentMethod['name'],currentMethod['args'],'returns',arg);
-
 
   function updateRegistry(target,args,column,value){
     var rowNum = getRowNum(target,args);
     var id = id(target,args);
     var mapId = 'behaviordata_' & id;
-
-    if( !isSimpleValue(value) ){
-     this.registryDataMap[mapId] = value;
-     querySetCell(getRegistry(),column, mapId, rowNum);
-     return;
-    }
-	  else if (value.toString() == '{undefined}'){
-	    this.registryDataMap.remove(mapId);
-	    querySetCell(getRegistry(),column, value, rowNum);
-	    return;
-	  }
-	  else{
-      this.registryDataMap.remove(mapId);
-	    querySetCell(getRegistry(),column, value, rowNum);
-	    return;
-	  }
-   $throw(type='UpdateMockRegistryException',message='Problem updating mock registry',detail=' Probably missing tests for MockRegistry.updateRegistry(target,args,column,value)');
-   //
+    
+    //  used to check for value.toString() == '{undefined}' ... forget why. doh!
+    //  maybe to control how returns behaves. maybe it should just return null
+    //  if not mocked?
+    this.registryDataMap[mapId] = value;
+    querySetCell(getRegistry(),column, mapId, rowNum);
 
   }
 

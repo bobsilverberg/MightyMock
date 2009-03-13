@@ -1,8 +1,18 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function $updateRegistryShouldAllowObjects(){
+  obj = createObject('component','mightymock.test.fixture.MyComponent');
+	debug(obj);
 
-function $register2Patterns(){
+  mr.register('foo',args);
+  mr.updateRegistry('foo',args,'returns', obj);
+
+  debug(mr);
+}
+
+
+function register2Patterns(){
   var pArgs = {1='{string}'};
   var pArgs2 = {1='{struct}'};
   mr.register('foo',args);
@@ -12,7 +22,7 @@ function $register2Patterns(){
 }
 
 
-function $argMapGetsPopulatedWithActualArgs(){
+function argMapGetsPopulatedWithActualArgs(){
   var pArgs = {1='{string}'};
   var pArgs2 = {1='{struct}'};
   mr.register('foo',args);
@@ -24,7 +34,7 @@ function $argMapGetsPopulatedWithActualArgs(){
   assert( 3==mr.argMap.size(), 'how did extra items get added to argMap?' );
 }
 
-function $getArgMapEntry(){
+function getArgMapEntry(){
   var pArgs = {1='{string}'};
   var pArgs2 = {1='barbar',2=-912389.0123,3=a};
   mr.register('foo',args);
@@ -35,7 +45,7 @@ function $getArgMapEntry(){
   assert( 3==itemArgs.size() );
  }
 
-function $invokedNonExistentMethodWithMatchingPatternShouldBehaveAsPattern(){
+function invokedNonExistentMethodWithMatchingPatternShouldBehaveAsPattern(){
   var pArgs = {1='{string}'};
   var pArgs2 = {1='{struct}'};
   var lArgs = {1='barbarmcfate'};
@@ -66,7 +76,7 @@ function $invokedNonExistentMethodWithMatchingPatternShouldBehaveAsPattern(){
 
 }
 
-function $invokedNonExistentMethodWithOutMatchingPatternShouldThrowException(){
+function invokedNonExistentMethodWithOutMatchingPatternShouldThrowException(){
 
   var lArgs = {1='barbarmcfate'};
   try{
@@ -134,7 +144,7 @@ function resetRegisteredBehavior(){
 
   mr.updateRegistry('foo', args,'returns', '{undefined}');
   try{
-  mr.getRegisteredBehavior('foo',args);
+   mr.getRegisteredBehavior('foo',args);
    fail('should not get here');
   }
   catch(UndefinedBehaviorException e){}
