@@ -29,13 +29,15 @@
 <cfscript>
 
   function testRegisterMockAsCollaboratorParameter(){
-     foo = $.create('foo');
-     bar = $.create('bar');
+     foo = $('foo');
+     bar = $('bar');
+     bar.barbar().returns(true);
 
      foo.setBar('i see the light').returns(bar);
      foo.asd(bar).returns('asd');
-     //foo.getBar().returns(bar);
-
+     b = foo.getBar().returns(bar);
+     assertIsTypeOf(b,'bar');
+     debug(b);
      debug(foo.debugMock());
      debug(bar.debugMock());
 
@@ -44,8 +46,8 @@
   }
 
   function testDeepChainedCollaborators(){
-     foo = $.create('foo');
-     bar = $.create('bar');
+     foo = $('foo');
+     bar = $('bar');
 
      foo.setBar(bar).returns(chr(0));
      foo.getBar().returns(bar);
@@ -60,25 +62,84 @@
 
   }
 
+  function loggerTraceShouldDoSomething() {
+     uuid = createUUID();
+     logMessage = 'messy bed; messy head';
+     mmFactory = createObject('component','mightymock.MightyMockFactory');
+     $ = mmFactory.create; 
 
-  function testLoggerFAIL() {
+     esapi            = $('org.owasp.esapi.ESAPI');
+     sessionFacade    = $('org.owasp.esapi.SessionFacade');
+     authenticator    = $('org.owasp.esapi.Authenticator');
+     securityConfig   = $('org.owasp.esapi.SecurityConfiguration');
+     encoder          = $('org.owasp.esapi.Encoder');
+     user             = $('org.owasp.esapi.User');
+    
+     //define behaviours
+     esapi.setSecurityConfiguration(securityConfig).returns();
+     esapi.securityConfiguration().returns(securityConfig); 
 
-     esapi = $.create('org.owasp.esapi.ESAPI');
-     esapi.reset();
-     sessionFacade = $.create('org.owasp.esapi.sessionFacade');
-     sessionFacade.getProperty("loggingID").returns(createUUID());
+     esapi.setSessionFacade(sessionFacade).returns();   
+     esapi.sessionFacade().returns(sessionFacade);
+
+     esapi.setEncoder(encoder).returns();
+     esapi.encoder().returns(encoder);
+
+     esapi.setAuthenticatior(authenticator).returns();
+     esapi.authenticator().returns(authenticator);
+
+     encoder.encodeForHTML(logMessage).returns(logMessage);
+
+     securityConfig.getProperty('LogEncodingRequired').returns(false);
+     sessionFacade.getProperty("loggingID").returns(uuid);
+     
+     authenticator.setCurrentUser(user).returns();
+     authenticator.getCurrentUser().returns(user);
+     user.getUserName().returns('the_mighty_mock');
+     user.getLastHostAddress().returns('127.0.0.1');
+     
+     //inject mock into mock; aka, mock acrobatics
+     esapi.setEncoder(encoder);
+     esapi.setSessionFacade(sessionFacade);
+     esapi.setAuthenticatior(authenticator);
+
+     //instantiate CUT
+     logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','debug',esapi);
+     logger.setLevel('trace');
+     
+     //exercise method
+     u = logger.trace(logMessage) ;
+     debug( ' username from logger: ' & u);
+
+     esapi.verify().sessionFacade();
+     user.verify().getUserName();
+
+  }
+
+
+  function testLoggerSimplePhoLogger() {
+     uuid = createUUID();
+     esapi = $('org.owasp.esapi.ESAPI');
+     sessionFacade = $('org.owasp.esapi.SessionFacade');
+     
+     sessionFacade.getProperty("loggingID").returns(uuid);
 
      esapi.setSessionFacade(sessionFacade).returns();
      esapi.sessionFacade().returns(sessionFacade);
 
      esapi.setSessionFacade(sessionFacade);
+     //sf = esapi.sessionFacade();
+     //debug(sf);
 
-
-     logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','warn',esapi);
-     debug(logger);
-
-     r = logger.trace('trace me') ;
-
+    // 
+    logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','warn',esapi);
+    result = logger.logTest('trace me') ;    
+    assertEquals( uuid,result );
+   
+     /* debug(logger);
+       r = logger.trace('trace me') ;    debug( isdefined('r'));
+     */     
+ 
      debug(esapi.debugMock());
      debug(sessionFacade.debugMock());
 
@@ -89,8 +150,8 @@
 
 
   function setUp(){
-  	$ = createObject('component','mightymock.MightyMockFactory');
-
+  	mmFactory = createObject('component','mightymock.MightyMockFactory');
+    $ = mmFactory.create;
   }
 
   function tearDown(){
