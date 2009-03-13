@@ -47,8 +47,7 @@
 		<cfargument name="message" type="string" required="true" hint="The message to log">
 
 		<cfif isTraceEnabled()>
-			<cfset u = logEntry("TRACE", arguments.message) />
-      <cfreturn u />
+			<cfset logEntry("TRACE", arguments.message) />
 		</cfif>
 	</cffunction>
 
@@ -154,8 +153,7 @@
 
 		<!--- Set a local variable to hold ColdFusions non-standard log levels --->
 		<cfset  var cfType = "" />
- <cfset uname = user.getUserName() />
-  <cfreturn uname />
+
 
     <!--- Determine which non-standard CF Log Level to use --->
 		<cfswitch expression="#arguments.type#">
@@ -190,7 +188,7 @@
 			application="true"
 			file="security"
 			text="Level: #arguments.type# - Logger Name: #variables.name# - 
-            Username:  user.getUserName() - Host: user.getLastHostAddress() -
+            Username:  #user.getUserName()# - Host: #user.getLastHostAddress()# -
             Session Logging ID: #userSessionLoggingID# - Message: logMessage" />
 
 	</cffunction>
