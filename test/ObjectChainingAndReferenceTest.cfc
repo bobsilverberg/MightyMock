@@ -66,6 +66,7 @@
      uuid = createUUID();
      logMessage = 'messy bed; messy head';
      mmFactory = createObject('component','mightymock.MightyMockFactory');
+     //jQuery-like alias - makes is cleaner, imo.
      $ = mmFactory.create; 
 
      esapi            = $('org.owasp.esapi.ESAPI');
@@ -108,9 +109,10 @@
      logger.setLevel('trace');
      
      //exercise method
-     u = logger.trace(logMessage) ;
-     debug( ' username from logger: ' & u);
+     logger.trace(logMessage) ;
+    
 
+     //Not a whole lot of verification. Just wanted the mock to work.
      esapi.verify().sessionFacade();
      user.verify().getUserName();
 

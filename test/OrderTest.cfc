@@ -88,7 +88,7 @@ function passWhenExpectationsMet(){
     mock3.four();
 
     //instantiate order verification object
-    order = createObject('component','mightymock.OrderExpectation').init(mock1,mock2,mock3);
+    order = createObject('component','mightymock.OrderedExpectation').init(mock1,mock2,mock3);
   }
 
   function tearDown(){
