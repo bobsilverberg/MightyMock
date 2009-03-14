@@ -14,13 +14,13 @@
     mock.foo('{string}').returns(true);
     actual = mock.foo('asdasd');
     debug( mock.debugMock() );
-    //assert(actual);
+    assert(actual);
   }
   
 
   
   function setUp(){
-  
+    mock.reset();
   }
   
   function tearDown(){

@@ -118,10 +118,12 @@
 -------------------------------------------------------------------------------------*/
 
   function verify(){
-   _$setState('verifying');
-    tempRule[1] = 'verifyOnce';
-    tempRule[2] = 1;
-   return this;
+    var count = 1;
+    _$setState('verifying');
+    tempRule[1] = 'verify';
+    if(arguments.size()) count = arguments[1];
+    tempRule[2] = count;
+    return this;
   }
 
   //Could put all this into onMissingMethod?
@@ -161,12 +163,13 @@
                                 Utils
 ------------------------------------------------------------------------------*/
 
+//To Do: Delegate to MockDebug and pretty print mock info
   function debugMock(){
     var mockBug = {};
     structInsert(mockBug, 'MockRegistry', registry.getRegistry());
     structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
     structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
-	  structInsert(mockBug, 'RegistryArgMap' , registry.argMap);
+	structInsert(mockBug, 'RegistryArgMap' , registry.argMap);
     return mockBug;
   }
 

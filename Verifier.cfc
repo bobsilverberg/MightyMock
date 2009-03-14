@@ -7,7 +7,11 @@
 
 function doVerify(verifyMethod, target, args, expected, mockreg){
   switch(verifyMethod){
-    case 'verifyTimes':
+    case 'verify':
+      return verify(expected, target, args, mockreg);
+    break;
+
+	case 'verifyTimes':
       return verifyTimes(expected, target, args, mockreg);
     break;
     
@@ -35,8 +39,17 @@ function doVerify(verifyMethod, target, args, expected, mockreg){
 
 
 
- function verify(target,args,mockreg){
-   return verifyOnce(target, args, mockreg);
+ function verify(expected,target,args,mockreg){
+   var actualCount = _$getActual(target,args, mockreg);
+   var details = '';
+   var isOk = actualCount == expected;
+     
+     if(!isOk){
+       calls = mockreg.getInvocationRecordsById(target,args).recordCount;
+       details = _$buildMessage('verify(#expected#)',target, args, expected, mockreg);
+       _$throw(exceptionType,'Mock verification failed. ',details);
+     }
+     return isOk;
  }
 
 

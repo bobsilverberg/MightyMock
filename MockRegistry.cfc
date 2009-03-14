@@ -90,11 +90,12 @@
 
 
   function id(target,args){
-   return target & '_' & argId(args);
+   return uCase(target) & '_' &  argId(args) ;
   }
 
   function argId(args){
-   return args.toString().hashCode();
+    var caseInsensitiveArgs = uCase(args.toString());
+    return caseInsensitiveArgs.hashCode();
   }
 
 

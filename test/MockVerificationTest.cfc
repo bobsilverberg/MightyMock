@@ -10,6 +10,15 @@ function howToHandlePatternVerification(){
   fail('Record all literal invocations and add a column for pattern id if invoked via a pattern match.');
 }
 
+
+function verifyShouldAcceptZeroOrMoreParams(){
+  mock.foo(1).returns('bar');
+  mock.foo(1);
+  mock.verify(1).foo(1);
+  mock.verifyTimes(1).foo(1);
+}
+
+
 function testThatEmptyVerifyWorksTheSameAsTimesOne(){
   mock.foo(1).returns('bar');
   mock.foo(1);
@@ -68,17 +77,17 @@ function verifyExceptionThrown(){
    }
    catch(YouSuckAtUnitTestingException e){
    }
-   mock.verify('once').foo(1);
+   mock.verify().foo(1);
 }
 
 function verifyCounts(){
   mock.foo(1).returns('bar');
   mock.foo(1);
-  mock.verify('times',1).foo(1);
-  mock.verify('atLeast',1).foo(1);
-  mock.verify('atMost',1).foo(1);
-  mock.verify('once').foo(1);
-  //mock.verify('never',0).foo(1);
+  mock.verifyTimes(1).foo(1);
+  mock.verifyAtLeast(1).foo(1);
+  mock.verifyAtMost(1).foo(1);
+  mock.verifyOnce().foo(1);
+  mock.verifyNever(0).asdasdasdasdasdasdasd(1);
 }
 
 function verifyNever(){

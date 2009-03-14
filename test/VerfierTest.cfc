@@ -3,6 +3,8 @@
 
 function doVerifyShouldExecuteTargets(){
   mr.addInvocationRecord('foo',args,'ok');
+  verifier.doVerify('verify', 'foo', args, 1, mr );
+
   verifier.doVerify('verifyTimes', 'foo', args, 1, mr );
   
   verifier.doVerify('verifyAtLeast', 'foo', args, 1, mr );
@@ -13,6 +15,11 @@ function doVerifyShouldExecuteTargets(){
   
   verifier.doVerify('verifyOnce', 'foo', args, 1, mr );
   
+}
+
+function verifyShouldActAsVerifyTimes(){
+    mr.addInvocationRecord('foo',args,'ok');
+    verifier.verify( 1, 'foo', args, mr );
 }
 
 

@@ -1,17 +1,17 @@
 <cfcomponent output="false" extends="mxunit.framework.TestCase">
 <cfscript>
     sys = createObject('java','java.lang.System');
-	  mName = 'foo';
-	  args = {a=[1,2,3],s='some value'};
-	  id =  '$' & sys.identityHashCode(mName) & '_' & sys.identityHashCode(args);
+	mName = 'foo';
+	args = {a=[1,2,3],s='some value'};
+	id =  '$' & sys.identityHashCode(mName) & '_' & sys.identityHashCode(args);
     a = [1,2,3,4];
     q = queryNew('asd');
     x = xmlnew();
     x.xmlRoot = XmlElemNew(x,"MyRoot");
 
     mock = createObject('component','mightymock.MightyMock').init('my.mock');
-
-
+    mockFactory = createObject('component','mightymock.MightyMockFactory').init();
+    $ = mockFactory.create;
 </cfscript>
 
   <cffunction name="getQ" access="private">

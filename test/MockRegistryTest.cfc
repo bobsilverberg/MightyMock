@@ -140,14 +140,18 @@ function resetRegisteredBehavior(){
   mr.register('foo',args);
   mr.updateRegistry('foo',args,'returns', 100);
   actual = mr.getRegisteredBehavior('foo',args);
+  debug(actual);
   assertEquals('returns',actual);
 
-  mr.updateRegistry('foo', args,'returns', '{undefined}');
+  mr.updateRegistry('foo', args, 'returns', '{undefined}');
   try{
-   mr.getRegisteredBehavior('foo',args);
-   fail('should not get here');
+    q = mr.getRegisteredBehavior('foo',args);
+    debug(q);
+    fail('should not get here');
   }
-  catch(UndefinedBehaviorException e){}
+  catch(UndefinedBehaviorException e){
+     debug(e);
+   }
   //assertEquals('undefined',actual);
 
 }
@@ -265,7 +269,7 @@ function isPatternShouldReturnFalseOnLiteral(){
 
   function idBuildsIdFromMethodAndArgHashcode(){
    var id = mr.id('foo',args);
-   var expected = 'foo' & '_' & args.toString().hashCode();
+   var expected = 'foo' & '_' & uCase(args.toString()).hashCode();
    debug(id);
    debug(expected);
    assertEquals(expected,id);
@@ -274,7 +278,7 @@ function isPatternShouldReturnFalseOnLiteral(){
 
   function argIdBuildsIdFromHashcode(){
    var id = mr.argid(args);
-   var expected = args.toString().hashCode();
+   var expected = uCase(args.toString()).hashCode();
    debug(id);
    debug(expected);
    assertEquals(expected,id);
