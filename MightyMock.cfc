@@ -48,7 +48,7 @@
 	// For this Impl, we might have to be more selective in order to help
 	// with performance ...
 
-
+/*
      for (item in variables){
        if(!item == 'this'){
          proxy[item] = variables[item];
@@ -56,7 +56,7 @@
        };
      }
 
-/*
+*/
      	proxy.RETURNS = RETURNS ;
 			proxy._$SETSTATE = _$SETSTATE;
 			proxy.variables._$SETSTATE = _$SETSTATE;
@@ -109,7 +109,7 @@
 			proxy.variables.VERIFYTIMES = VERIFYTIMES;
 			proxy._$GETREGISTRY = _$GETREGISTRY;
 			proxy.variables._$GETREGISTRY = _$GETREGISTRY;
-*/
+
      return proxy;
 
  }

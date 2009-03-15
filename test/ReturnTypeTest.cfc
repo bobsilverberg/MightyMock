@@ -5,6 +5,9 @@ function testThatMockIsDesiredType(){
    m2 = $(mockery, true);
    m1.foo().returns('bar');
    m2.bar().returns('foo');
+
+   debug(m1);
+   debug(m2);
    debug( m1.debugMock() );
    debug( m2.debugMock() );
 
