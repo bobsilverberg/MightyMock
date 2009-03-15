@@ -1,9 +1,9 @@
 <cfcomponent output="false" extends="mxunit.framework.TestCase">
 <cfscript>
-    sys = createObject('java','java.lang.System');
-	mName = 'foo';
-	args = {a=[1,2,3],s='some value'};
-	id =  '$' & sys.identityHashCode(mName) & '_' & sys.identityHashCode(args);
+   sys = createObject('java','java.lang.System');
+	 mName = 'foo';
+	 args = {a=[1,2,3],s='some value'};
+  	id =  '$' & sys.identityHashCode(mName) & '_' & sys.identityHashCode(args);
     a = [1,2,3,4];
     q = queryNew('asd');
     x = xmlnew();
@@ -11,6 +11,8 @@
     dummy = 'mightymock.test.fixture.Dummy';
     mockery = 'mightymock.test.fixture.Mockery';
     mock = createObject('component','mightymock.MightyMock').init(dummy);
+
+
     mockFactory = createObject('component','mightymock.MightyMockFactory').init();
     $ = mockFactory.create; //jQuery-like alias for multi-mock creation
 </cfscript>

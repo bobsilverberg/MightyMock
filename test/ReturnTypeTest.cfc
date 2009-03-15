@@ -1,22 +1,28 @@
 <cfcomponent extends="BaseTest">
 <cfscript>
 function testThatMockIsDesiredType(){
-  m1 = $(dummy, true);
-  assertIsTypeOf( m1, dummy );
-  m2 = $(dummy);
-  m3 = $('asd');
-  debug(m2);
-  debug(m3);
-  assertIsTypeOf( m2, 'mightymock.test.fixture.Dummy' );
- try{
-   foo(m2);
-   fail('should fail');
-  }
-  catch(any e){
+   m1 = $(dummy, true);
+   m2 = $(mockery, true);
+   debug( getMetaData(m1).name );
+   debug( getMetaData(m2).name );
 
-  }
+   debug( m2.debugMock() );
+}
+
+function testThatInitIsCallingCreateTypeSafeMocks(){
+
 
 }
+
+function testCreateMultiplTypeSafeMocks(){
+  mymock =  createObject('component','mightymock.MightyMock').createMultipleTypeSafeMocks(dummy);
+  mymock2 =  createObject('component','mightymock.MightyMock').createMultipleTypeSafeMocks(mockery);
+  assertIsTypeOf(mymock, 'mightymock.test.fixture.Dummy');
+  assertIsTypeOf(mymock2, 'mightymock.test.fixture.Mockery');
+  assertIsTypeOf(mock, 'mightymock.test.fixture.Dummy');
+
+}
+
 </cfscript>
 
 

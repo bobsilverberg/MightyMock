@@ -29,27 +29,31 @@
 <cfscript>
 
   function loggerTraceShouldDoSomething() {
-     
+
      mmFactory = createObject('component','mightymock.MightyMockFactory');
      $ = mmFactory.create;
      //jQuery-like alias - makes is cleaner, imo.
-     $ = mmFactory.create; 
+     $ = mmFactory.create;
 
      uuid = createUUID();
      logMessage = 'messy bed; messy head';
 
-     esapi            = $('org.owasp.esapi.ESAPI');
-     sessionFacade    = $('org.owasp.esapi.SessionFacade');
-     authenticator    = $('org.owasp.esapi.Authenticator');
-     securityConfig   = $('org.owasp.esapi.SecurityConfiguration');
-     encoder          = $('org.owasp.esapi.Encoder');
-     user             = $('org.owasp.esapi.User');
-    
+     esapi            = $('org.owasp.esapi.ESAPI',true);
+     sessionFacade    = $('org.owasp.esapi.SessionFacade',true);
+     authenticator    = $('org.owasp.esapi.Authenticator',true);
+     securityConfig   = $('org.owasp.esapi.SecurityConfiguration',true);
+     encoder          = $('org.owasp.esapi.Encoder',true);
+     user             = $('org.owasp.esapi.User',true);
+
+     debug(getType(esapi));
+     debug(getType(sessionFacade));
+     debug(getType(encoder));
+
      //define behaviours
      esapi.setSecurityConfiguration(securityConfig).returns();
-     esapi.securityConfiguration().returns(securityConfig); 
+     esapi.securityConfiguration().returns(securityConfig);
 
-     esapi.setSessionFacade(sessionFacade).returns();   
+     esapi.setSessionFacade(sessionFacade).returns();
      esapi.sessionFacade().returns(sessionFacade);
 
      esapi.setEncoder(encoder).returns();
@@ -62,12 +66,12 @@
 
      securityConfig.getProperty('LogEncodingRequired').returns(false);
      sessionFacade.getProperty("loggingID").returns(uuid);
-     
+
      authenticator.setCurrentUser(user).returns();
      authenticator.getCurrentUser().returns(user);
      user.getUserName().returns('the_mighty_mock');
      user.getLastHostAddress().returns('127.0.0.1');
-     
+
      //inject mock into mock; aka, mock acrobatics
      esapi.setEncoder(encoder);
      esapi.setSessionFacade(sessionFacade);
@@ -76,16 +80,16 @@
      //instantiate CUT
      logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','debug',esapi);
      logger.setLevel('trace');
-     
+
      //exercise method
      logger.trace(logMessage) ;
-    
+
 
      //Not a whole lot of verification. Just wanted the mock to work.
      esapi.verify().sessionFacade();
      user.verify().getUserName();
      order = createObject('component','mightymock.OrderedExpectation').init(esapi,user);
-    
+
       order.setEncoder(encoder).
             setSessionFacade(sessionFacade).
             setAuthenticatior(authenticator).
@@ -99,4 +103,9 @@
 
 
 </cfscript>
+
+<cffunction name="getType" access="private">
+ <cfargument name="mock" />
+ <cfreturn getMetaData(mock).name />
+</cffunction>
 </cfcomponent>

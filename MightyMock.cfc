@@ -43,31 +43,87 @@
 	   newCfc.variables.bar = bar;
 	   All is well ...
 
-	*/
 
+*/
 	// For this Impl, we might have to be more selective in order to help
 	// with performance ...
 
+
      for (item in variables){
-       proxy[item] = variables[item];
-       proxy.variables[item] =  variables[item];
+       if(!item == 'this'){
+         proxy[item] = variables[item];
+         proxy.variables[item] =  variables[item];
+       };
      }
 
+/*
+     	proxy.RETURNS = RETURNS ;
+			proxy._$SETSTATE = _$SETSTATE;
+			proxy.variables._$SETSTATE = _$SETSTATE;
+			proxy.DEBUGMOCK =  DEBUGMOCK;
+			proxy.variables.DEBUGMOCK =  DEBUGMOCK;
+			proxy._$GETPREVIOUSSTATE  =  _$GETPREVIOUSSTATE;
+			proxy.variables._$GETPREVIOUSSTATE  =  _$GETPREVIOUSSTATE;
+			proxy.MOCKSPY = MOCKSPY;
+			proxy.variables.MOCKSPY = MOCKSPY;
+			proxy.VERIFYATLEAST=VERIFYATLEAST;
+			proxy.variables.VERIFYATLEAST=VERIFYATLEAST;
+			proxy.THROWS = THROWS ;
+			proxy.variables.THROWS = THROWS ;
+			proxy._$INVOKEMOCK = _$INVOKEMOCK;
+			proxy.variables._$INVOKEMOCK = _$INVOKEMOCK;
+			proxy.VERIFYONCE = VERIFYONCE;
+			proxy.variables.VERIFYONCE = VERIFYONCE;
+			proxy.variables.CURRENTMETHOD=CURRENTMETHOD;
+			proxy._$THROW = _$THROW;
+			proxy.variables._$THROW = _$THROW;
+			proxy.variables.STATES = STATES;
+			proxy.variables.PREVIOUSSTATE = PREVIOUSSTATE;
+			proxy.VERIFYNEVER = VERIFYNEVER;
+			proxy.variables.VERIFYNEVER = VERIFYNEVER;
+			proxy._$GETSPY =_$GETSPY;
+			proxy.variables._$GETSPY =_$GETSPY;
+			proxy.variables.TEMPRULE =TEMPRULE;
+			proxy.SETSPY=SETSPY;
+			proxy.variables.SETSPY=SETSPY;
+			proxy.variables.CURRENTSTATE = variables.CURRENTSTATE;
+			proxy._$DEBUGREG = _$DEBUGREG ;
+			proxy.variables._$DEBUGREG = _$DEBUGREG;
+			proxy.variables.REGISTRY = REGISTRY;
+			proxy._$GETSTATE =_$GETSTATE;
+			proxy.RESET = RESET;
+			proxy.variables.RESET = RESET;
+			proxy.ONMISSINGMETHOD  = ONMISSINGMETHOD;
+			proxy.VERIFYATMOST=VERIFYATMOST;
+			proxy.variables.VERIFYATMOST=VERIFYATMOST;
+			proxy.variables.MATCHER = MATCHER;
+			proxy.variables.SPY= SPY;
+			proxy.variables.VERIFIER = VERIFIER;
+			proxy.REGISTER = REGISTER;
+			proxy.variables.REGISTER = REGISTER;
+			proxy._$DEBUGINVOKE = _$DEBUGINVOKE;
+			proxy._$DUMP = _$DUMP;
+			proxy.VERIFY = VERIFY;
+			proxy.variables.VERIFY = VERIFY;
+			proxy.VERIFYTIMES = VERIFYTIMES;
+			proxy.variables.VERIFYTIMES = VERIFYTIMES;
+			proxy._$GETREGISTRY = _$GETREGISTRY;
+			proxy.variables._$GETREGISTRY = _$GETREGISTRY;
+*/
      return proxy;
 
  }
 
  function init(){
    var localSpy = '';
-   var proxy = '';
    var proxyVars = '';
 
    /*
     Make "fast mock" and bypass scope acrobatics.
    */
-   if( arguments.size()eq 0 ) return this;
+   if( arguments.size() eq 0 ) return this;
 
-   if( arguments.size()eq 1){
+   if( arguments.size() eq 1){
      getMetaData(this).name = arguments[1];
      getMetaData(this).fullname = arguments[1];
      return this;
@@ -76,7 +132,7 @@
    /*
      Make multiple type safe mocks.
    */
-   if(arguments.size()>0) {
+   if( arguments.size() eq 2 ) {
 	   try{
 	    return createMultipleTypeSafeMocks(arguments[1]);
 		 }
@@ -85,6 +141,7 @@
 		 }
   }
  }
+
 
  function _$snif(){
   return variables;
