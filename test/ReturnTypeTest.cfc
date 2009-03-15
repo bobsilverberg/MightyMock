@@ -3,10 +3,11 @@
 function testThatMockIsDesiredType(){
    m1 = $(dummy, true);
    m2 = $(mockery, true);
-   debug( getMetaData(m1).name );
-   debug( getMetaData(m2).name );
-
+   m1.foo().returns('bar');
+   m2.bar().returns('foo');
+   debug( m1.debugMock() );
    debug( m2.debugMock() );
+
 }
 
 function testThatInitIsCallingCreateTypeSafeMocks(){

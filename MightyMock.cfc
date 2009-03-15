@@ -294,10 +294,11 @@
 //To Do: Delegate to MockDebug and pretty print mock info
   function debugMock(){
     var mockBug = {};
+    structInsert(mockBug," MockName", getMetaData(this).name );
     structInsert(mockBug, 'MockRegistry', registry.getRegistry());
     structInsert(mockBug, 'InvocationRecord', registry.invocationRecord);
     structInsert(mockBug, 'RegistryDataMap' , registry.registryDataMap);
-	structInsert(mockBug, 'RegistryArgMap' , registry.argMap);
+	  structInsert(mockBug, 'RegistryArgMap' , registry.argMap);
     return mockBug;
   }
 
