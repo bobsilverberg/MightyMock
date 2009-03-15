@@ -31,6 +31,7 @@
    var nextExpectation = '';
    var nextExpectationTime = '';
    var numberOfExpectations = expectations.size();
+   var i=1;
 
    for(i=1; i <= numberOfExpectations; i++){
 	        currentExpectation = expectations[i];

@@ -3,11 +3,16 @@
 
 
  function $printPrettyFailureMessage(){
-  order.one().four( ).three( ).verify();
+  try{
+    order.one().four( ).three( ).verify();
+   }
+   catch(mxunit.exception.AssertionFailedError e){
+     debug(e); 
+   }
+  
   debug( order.getInvocations() );
   debug( order.getExpectations() );
 
-  fail('Need to print better failure message.');
  }
 
  function simpleVerify(){
@@ -21,7 +26,7 @@
 
 
   function testGetInvocationTime(){
-   var t = order.getInvocationTime('one_3938');
+   var t = order.getInvocationTime('ONE_3938'); //upper case!
     order.one().
      			two().
      			three();

@@ -116,6 +116,12 @@
      esapi.verify().sessionFacade();
      user.verify().getUserName();
 
+	 ordered = createObject('component','mightymock.OrderedExpectation').init(esapi,user);
+     ordered.sessionFacade().
+			 securityConfiguration().
+			 getLastHostAddress().
+             verify();
+
   }
 
 

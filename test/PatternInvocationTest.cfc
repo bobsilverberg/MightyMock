@@ -1,21 +1,26 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
   
-  
+ function peepWildCardPatternExec(){
+    mock.foo('{+}').returns(true);
+    actual = mock.foo('asd');
+    
+    debug( mock.debugMock() );
+   // assert(actual);
+    mock.verify().foo('asd');
+  }  
+
+
   function peepPatternExec(){
     mock.foo('{string}').returns(true);
     actual = mock.foo('asd');
+    mock.foo('asd');
     debug( mock.debugMock() );
     assert(actual);
-    //mock.verify().foo('asd');
+    mock.verify(2).foo('{string}');
   }
   
-   function peepWildCardPatternExec(){
-    mock.foo('{string}').returns(true);
-    actual = mock.foo('asdasd');
-    debug( mock.debugMock() );
-    assert(actual);
-  }
+   
   
 
   

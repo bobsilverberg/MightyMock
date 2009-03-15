@@ -11,19 +11,24 @@
 
  function init(name){
    var localSpy = '';
+   var proxy = '';
    getMetaData(this).name = name;
    getMetaData(this).fullname = name;
    if(arguments.size()>1) {
    try{
      localSpy = createObject('component',arguments[1]); //need to implement initParams
+     proxy = createObject('component',arguments[1]);
      setSpy(localSpy);
+     structClear(proxy);
+     proxy.variables = variables;
+     //what about this scopes?
    }
    catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
      _$throw('InvalidSpyException',e.getMessage(),e.getDetail());
    }
 
    }
-   return this;
+   return  proxy;
  }
 
  function setSpy(iSpy){
