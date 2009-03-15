@@ -8,10 +8,11 @@
     q = queryNew('asd');
     x = xmlnew();
     x.xmlRoot = XmlElemNew(x,"MyRoot");
-
-    mock = createObject('component','mightymock.MightyMock').init('my.mock');
+    dummy = 'mightymock.test.fixture.Dummy';
+    mockery = 'mightymock.test.fixture.Mockery';
+    mock = createObject('component','mightymock.MightyMock').init(dummy);
     mockFactory = createObject('component','mightymock.MightyMockFactory').init();
-    $ = mockFactory.create;
+    $ = mockFactory.create; //jQuery-like alias for multi-mock creation
 </cfscript>
 
   <cffunction name="getQ" access="private">

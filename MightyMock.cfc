@@ -8,28 +8,89 @@
 ------------------------------------------------------------------------------*/
 
 
+ function createSpy(name){
+   var localSpy = createObject('component', name);
+ }
 
- function init(name){
+ function createMultipleTypeSafeMocks(name){
+     var localSpy = createObject('component', name); //need to implement initParams
+     var proxy = createObject('component', name);
+
+     //setSpy(localSpy); //To Do: Change logic o invoke spy methods
+     structClear(proxy);
+     proxy.snif = _$snif; //sniffer for variables scope
+     proxyVars = proxy.snif();
+     structClear(proxyVars);
+     proxy.variables = proxyVars;
+
+	/* Need to write to THIS and VARIABLES scope because some weird scoping
+	   issue when invoking a variable-scoped method from within another
+	   method, CF sees this as undefined.
+	   Ex: this works normally:
+	   function foo(){
+	    return bar();
+	   }
+
+	   But if copying both foo and bar to another component:
+	   newCfc.foo = foo;
+	   newCfc.bar = bar;
+
+	   calling foo() fails with undefined bar exception. However, if we
+	   do this:
+	   newCfc.foo = foo;
+	   newCfc.variables.foo = foo;
+	   newCfc.bar = bar;
+	   newCfc.variables.bar = bar;
+	   All is well ...
+
+	*/
+
+	// For this Impl, we might have to be more selective in order to help
+	// with performance ...
+
+     for (item in variables){
+       proxy[item] = variables[item];
+       proxy.variables[item] =  variables[item];
+     }
+
+     return proxy;
+
+ }
+
+ function init(){
    var localSpy = '';
    var proxy = '';
-   getMetaData(this).name = name;
-   getMetaData(this).fullname = name;
-   if(arguments.size()>1) {
-   try{
-     localSpy = createObject('component',arguments[1]); //need to implement initParams
-     proxy = createObject('component',arguments[1]);
-     setSpy(localSpy);
-     structClear(proxy);
-     proxy.variables = variables;
-     //what about this scopes?
-   }
-   catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
-     _$throw('InvalidSpyException',e.getMessage(),e.getDetail());
+   var proxyVars = '';
+
+   /*
+    Make "fast mock" and bypass scope acrobatics.
+   */
+   if( arguments.size()eq 0 ) return this;
+
+   if( arguments.size()eq 1){
+     getMetaData(this).name = arguments[1];
+     getMetaData(this).fullname = arguments[1];
+     return this;
    }
 
-   }
-   return  proxy;
+   /*
+     Make multiple type safe mocks.
+   */
+   if(arguments.size()>0) {
+	   try{
+	    return createMultipleTypeSafeMocks(arguments[1]);
+		 }
+		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
+		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
+		 }
+  }
  }
+
+ function _$snif(){
+  return variables;
+ }
+
+
 
  function setSpy(iSpy){
   spy = arguments.iSpy;
@@ -85,7 +146,9 @@
      }
 
 
-     _$setState('registering');
+     //_$setState('registering');
+     currentState = 'registering';
+		 previousState = 'idle';
      registry.register(target,args); //could return id
      currentMethod['name'] = target;
      currentMethod['args'] = args;
@@ -93,9 +156,12 @@
    }
 
    else{
-    _$setState('executing');
+    // _$setState('executing');
+    currentState = 'executing';
+		previousState = 'registering';
     currentMethod = {};
-    return _$invokeMock(target,args);
+    retval = _$invokeMock(target,args);
+    return retval;
    }
 
    return '';
@@ -245,7 +311,7 @@
 /*------------------------------------------------------------------------------
                           Private Instance Members
 ------------------------------------------------------------------------------*/
-registry = createObject('component','MockRegistry');
+variables.registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
 verifier = createObject('component','Verifier');
 

@@ -1,7 +1,19 @@
 <cfcomponent output="false">
 	<cfscript>
-
+    aSimpleVar = 'simple var';
+    this.bar = 'bar';
 	collaborator = '';
+
+    helper = createObject('component','Helper');
+
+
+   function invokeHelper(){
+    return helper.helpMe();
+   }  
+ 
+   function getInjectedSpyVar(){
+     return MYSPYVAR;
+   }   
 
 	function setCollaborator(col){
 	  collaborator = col;

@@ -2,12 +2,11 @@
 <cfscript>
 
 function $mockShouldBeAbleToReturnOtherMock(){
-   mock.reset();
-   mock2 = createObject('component','mightymock.MightyMock').init('mockery');
+   mock2 = createObject('component','mightymock.MightyMock').init(mockery);
+   //debug(mock2);
    mock.foo('asd').returns(mock2);
    t = mock.foo('asd');
-   debug(t);
-   assertIsTypeOf(t,'mockery');
+   assertIsTypeOf(t, mockery);
 }
 
 function methodShouldBeAbleToReturnObject(){
@@ -20,13 +19,13 @@ function methodShouldBeAbleToReturnObject(){
 function clearOrResetMock(){
   mock.foo('asd').returns('asd');
   mock.foo('asd');
-  debug(mock.debugMock() );
+  debug(mock.debugMock());
   mock.reset();
   reg = mock._$getRegistry();
   debug(reg.invocationRecord);
   assert( reg.invocationRecord.recordCount == 0, 'invocation records still there' );
   assert( reg.registry.recordCount == 0, 'registry items still there' );
-  
+
 }
 
 
@@ -41,21 +40,21 @@ function simpleVerifyTest(){
  mock.foo2('asd');
  mock.verify().foo2('asd');
 
- 
+
  mock.verifyAtLeast(1).foo('asd');
 
- 
+
   mock.foo2('asd');
   mock.foo2('asd');
   debug( mock.debugMock() );
   mock.verifyAtMost(3).foo2('asd');
-  
+
   mock.verifyNever().xxx('asd');
-  
+
   mock.bling(a).returns(true);
   mock.bling(a);
   mock.verifyOnce().bling(a);
-  
+
 
 }
 
@@ -107,11 +106,11 @@ function whatHappensIf(){
 
 
   function setUp(){
-   mock = createObject('component','mightymock.MightyMock').init('my.mock');
+   //mock = createObject('component','mightymock.MightyMock').init('my.mock');
   }
 
   function tearDown(){
-
+    mock.reset();
   }
 
 
