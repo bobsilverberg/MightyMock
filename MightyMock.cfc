@@ -7,15 +7,56 @@
       unexpected behavior if not used correctly.
 ------------------------------------------------------------------------------*/
 
+ function mockify(obj, func, data){
+  var name = getMetaData(func).name;
+  var template = '<cfcomponent><cffunction name="#name#" access="public"><cfreturn "bar"></cffunction></cfcomponent>';
+  var id = createUUID();
+  var fileName = expandPath('/mightymock/#id#.cfc');
+  var tempO = '';
+  fileWrite(fileName,template);
+  tempO = createObject( 'component', id );
+  fileDelete(fileName);
+  obj.func = tempO[name];
+  //return objFunc;
+ }
+
+
+ function init(){
+   var localSpy = '';
+   var proxyVars = '';
+
+   /*
+    Make "fast mock" and bypass scope acrobatics.
+   */
+   if( arguments.size() eq 0 ) return this;
+
+   if( arguments.size() eq 1){
+     getMetaData(this).name = arguments[1];
+     getMetaData(this).fullname = arguments[1];
+     return this;
+   }
+
+   /*
+     Make multiple type safe mocks.
+   */
+   if( arguments.size() eq 2 ) {
+	   try{
+	    return createMultipleTypeSafeMocks(arguments[1]);
+		 }
+		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
+		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
+		 }
+  }
+ }
 
  function createSpy(name){
    var localSpy = createObject('component', name);
+   _$throw('UnimplementedException','createSpy(name) is not yet implemented','');
  }
 
  function createMultipleTypeSafeMocks(name){
      var localSpy = createObject('component', name); //need to implement initParams
      var proxy = createObject('component', name);
-
      //setSpy(localSpy); //To Do: Change logic o invoke spy methods
      structClear(proxy);
      proxy.snif = _$snif; //sniffer for variables scope
@@ -48,15 +89,17 @@
 	// For this Impl, we might have to be more selective in order to help
 	// with performance ...
 
+
+
 /*
-     for (item in variables){
+     for (item in localVars){
        if(!item == 'this'){
          proxy[item] = variables[item];
          proxy.variables[item] =  variables[item];
        };
      }
-
 */
+
      	proxy.RETURNS = RETURNS ;
 			proxy._$SETSTATE = _$SETSTATE;
 			proxy.variables._$SETSTATE = _$SETSTATE;
@@ -113,40 +156,6 @@
      return proxy;
 
  }
-
- function init(){
-   var localSpy = '';
-   var proxyVars = '';
-
-   /*
-    Make "fast mock" and bypass scope acrobatics.
-   */
-   if( arguments.size() eq 0 ) return this;
-
-   if( arguments.size() eq 1){
-     getMetaData(this).name = arguments[1];
-     getMetaData(this).fullname = arguments[1];
-     return this;
-   }
-
-   /*
-     Make multiple type safe mocks.
-   */
-   if( arguments.size() eq 2 ) {
-	   try{
-	    return createMultipleTypeSafeMocks(arguments[1]);
-		 }
-		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
-		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
-		 }
-  }
- }
-
-
- function _$snif(){
-  return variables;
- }
-
 
 
  function setSpy(iSpy){
@@ -324,6 +333,12 @@
 /*------------------------------------------------------------------------------
                                 Private API.
 ------------------------------------------------------------------------------*/
+
+
+//sniffer hook into another object's variables scope
+ function _$snif(){
+  return variables;
+ }
 
   function _$invokeMock(target,args){
     var behavior = registry.getRegisteredBehavior(target,args);

@@ -6,10 +6,14 @@ function testThatMockIsDesiredType(){
    m1.foo().returns('bar');
    m2.bar().returns('foo');
 
-   debug(m1);
-   debug(m2);
+   //debug(m1);
+   //debug(m2);
    debug( m1.debugMock() );
    debug( m2.debugMock() );
+
+  assertIsTypeOf(m1, 'mightymock.test.fixture.Dummy');
+  assertIsTypeOf(m2, 'mightymock.test.fixture.Mockery');
+  assertIsTypeOf(mock, 'mightymock.test.fixture.Dummy');
 
 }
 
