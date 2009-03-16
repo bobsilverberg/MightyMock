@@ -7,17 +7,24 @@
       unexpected behavior if not used correctly.
 ------------------------------------------------------------------------------*/
 
- function mockify(obj, func, data){
-  var name = getMetaData(func).name;
+//should be separate object!
+ function mockify(objfunc, data){
+  var name = getMetaData(objfunc).name;
   var template = '<cfcomponent><cffunction name="#name#" access="public"><cfreturn "bar"></cffunction></cfcomponent>';
   var id = createUUID();
   var fileName = expandPath('/mightymock/#id#.cfc');
   var tempO = '';
+  var oCfcPath = objfunc.getPagePath();
+  //var targetO = '';
+  var targetO = createObject('java','coldfusion.cfc.CFCProxy').init(oCfcPath);
+  method = targetO.getThisScope();
   fileWrite(fileName,template);
   tempO = createObject( 'component', id );
+
   fileDelete(fileName);
   obj.func = tempO[name];
-  //return objFunc;
+
+  return targetOs;
  }
 
 
