@@ -319,6 +319,8 @@
     registry.reset();
 	  _$setState('idle');
     currentMethod = {};
+    getMetaData(this).name = 'MightyMock';
+    getMetaData(this).fullname = 'MightyMock';
     return this;
   }
 
@@ -385,11 +387,12 @@
 
 
 /*------------------------------------------------------------------------------
-                          Private Instance Members
+                          Private Instance Members                              
 ------------------------------------------------------------------------------*/
 variables.registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
 verifier = createObject('component','Verifier');
+
 
 spy = chr(0);     //used if creating a partial mock.
 
