@@ -212,9 +212,7 @@
      }
 
 
-     //_$setState('registering');
-     currentState = 'registering';
-		 previousState = 'idle';
+     _$setState('registering');
      registry.register(target,args); //could return id
      currentMethod['name'] = target;
      currentMethod['args'] = args;
@@ -222,9 +220,7 @@
    }
 
    else{
-    // _$setState('executing');
-    currentState = 'executing';
-		previousState = 'registering';
+    _$setState('executing');
     currentMethod = {};
     retval = _$invokeMock(target,args);
     return retval;
@@ -314,7 +310,7 @@
 
   function reset(){
     registry.reset();
-	  currentState = states[1];
+	  _$setState('idle');
     currentMethod = {};
     return this;
   }
