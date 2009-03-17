@@ -1,6 +1,15 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+ function canUnregisteredMockReturnNull(){
+   mock.reset();
+   r1 = mock.foo().returns();
+   r2 = mock.foo();
+   debug(r1);
+   debug(r2);
+   fail('first call to mock.foo() retuns this. should return null. how to do that');
+ }
+
 function $shouldThrowRegisteredException(){
   mock.foo(1).throws('YouSuckAtUnitTestingException');
   try{

@@ -170,7 +170,7 @@
  }
 
  function onMissingMethod(target,args){
-   var t = chr(0);
+   var tempMock = chr(0);
    var temp = '';
 
    if( currentState == 'verifying'){
@@ -184,15 +184,15 @@
      if (!registry.isPattern(args)){ //pee-yew!
       try{
        //To Do: record the literal and invoke pattern behavior
-       t = registry.findByPattern(target,args);
-       return _$invokeMock(t['target'],t['args']);
+       tempMock = registry.findByPattern(target,args);
+       return _$invokeMock(tempMock['target'],tempMock['args']);
       }
       catch(MismatchedArgumentPatternException e){}
      }
 
-
+  //Check to see if a spy object is registered
      if(isObject(spy)){
-       if(currentState == 'registering'){  //user did mock.register() to prevent execution
+       if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
          registry.register(target,args);
          currentMethod['name'] = target;
          currentMethod['args'] = args;
@@ -218,18 +218,26 @@
        }
      }
 
-
+   //Now we try to register the mock.
      _$setState('registering');
      registry.register(target,args); //could return id
      currentMethod['name'] = target;
      currentMethod['args'] = args;
+     // what logic can we implement to simply return '' if not mocked? AND
+     // implement chaining?
      return this;
    }
 
    else{
     _$setState('executing');
     currentMethod = {};
-    retval = _$invokeMock(target,args);
+    try{
+     retval = _$invokeMock(target,args);
+    }
+    catch(UnmockedBehaviorException e){
+      retval = chr(0);
+    }
+
     return retval;
    }
 
@@ -387,7 +395,7 @@
 
 
 /*------------------------------------------------------------------------------
-                          Private Instance Members                              
+                          Private Instance Members
 ------------------------------------------------------------------------------*/
 variables.registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
