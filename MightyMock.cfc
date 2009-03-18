@@ -241,7 +241,7 @@
     return retval;
    }
 
-   return '';
+   return chr(0);
  }
 
 
