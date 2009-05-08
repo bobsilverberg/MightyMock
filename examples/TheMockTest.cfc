@@ -23,7 +23,7 @@
      actual = comp.callLoggerALot();
 
      //5. Verify that the mock was called
-     mock.verify('times',25).logStuff();
+     mock.verifyTimes(25).logStuff();
 
 
   }
@@ -46,7 +46,7 @@
 
      //5. Verify that the mock was called
      //Should be 25 and will fail intentionally
-     mock.verify('times',20).logStuff();
+     mock.verifyTimes(20).logStuff();
 
 
   }
