@@ -7,7 +7,7 @@
     
     debug( mock.debugMock() );
    // assert(actual);
-    mock.verify().foo('asd');
+    //mock.verify().foo('asd');
   }  
 
 
