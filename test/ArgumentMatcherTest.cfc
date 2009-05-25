@@ -1,14 +1,49 @@
 <cfcomponent output="false" extends="BaseTest">
+
+<cffunction name="mismatchedArgumentTypesShouldFail" mxunit:expectedException="NamedArgumentConflictException">
+ <cfscript>
+  var literal = { foo='bar', bar=321654};
+  var pattern = { 1='{string}', 2='{numeric}'};
+  matcher.match(literal,pattern);
+  </cfscript>
+</cffunction>
+
 <cfscript>
 
 function setUp(){
  matcher = createObject('component','mightymock.ArgumentMatcher');
 }
 
+function compareStructKeys() {
+  var literal = { foo='bar', bar=321654};
+  var pattern = { fOo='{string}', baR='{numeric}'};
+  var literalKeys = structKeyArray(literal);
+  var patternKeys = structKeyArray(pattern);
+  debug(literalKeys );
+  debug(patternKeys);
+  debug(literalKeys.toString() == patternKeys.toString());
+  assertEquals(literalKeys , patternKeys);
+
+}
+
+function namedArgumentPatternTest() {
+  var literal = { foo='bar', bar=321654};
+  var pattern = { foo='{string}', bar='{numeric}'};
+  actual = matcher.match(literal,pattern) ;
+  assert(actual,'did not match #pattern.toString()#');
+}
 
 
-function findByPatternTest(){
+function findByPatternTestWithNamedArgs(){
+  var actual = false;
+  var incomming = { foo='bar', bar=321654};
+  var existing = { 1='{*}'};
+  actual = matcher.match(incomming,existing) ;
+  assert(actual,'did not match {*}');
 
+  existing = { 1='{+}'};
+  actual = matcher.match(incomming,existing) ;
+  assert(actual,'did not match {+}');
 }
 
 

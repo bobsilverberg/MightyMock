@@ -2,7 +2,7 @@
 <cfscript>
 
   /*
-  Requirement: Matches both the order and name of arguments. This is
+  Requirement: Matches both the order or name of arguments. This is
   accomplished by understanding how the method being mocked is invoked
   by the component under tests; e.g.,
 
@@ -30,7 +30,7 @@
    mock.theMethod( foo='{string}', bar='{query}' ).returns('');
 */
 
-  function match(literal,pattern){ 
+  function match(literal,pattern){
     var i = 0;
     var argType = '';
     var element = '';
@@ -38,6 +38,8 @@
     var oArg = '';
     var flag = false;
     var oStringVal = '';
+    var literalKeyString = structKeyArray(literal).toString();
+    var patternKeyString = structKeyArray(pattern).toString();
 
    //maybe a wildcard
    if(pattern.size() == 1){
@@ -50,8 +52,15 @@
    if( literal.size() != pattern.size() ){
      $throw('MismatchedArgumentNumberException',
             'Different number of parameters.',
-            'Make sure the same number of paramters are passed in.'); 
+            'Make sure the same number of paramters are passed in.');
    }
+
+  if(literalKeyString != patternKeyString){
+   $throw('NamedArgumentConflictException',
+          'Different parameter type definition.',
+          'It appears that you defined a mock using named or ordered arguments, but attempted to invoke it otherwise. Please use either named or ordered argument, but not both.');
+   }
+
 
    for(key in literal){
      element = literal[key];
@@ -63,8 +72,8 @@
        }
        else{
         oStringVal = element.toString();
-       }	
-      $throw('MismatchedArgumentPatternException', 
+       }
+      $throw('MismatchedArgumentPatternException',
              'Was looking at "#key# = #oStringVal#" and trying to match it to type: #oArg.toString()#',
              'Make sure the component being mocked matches parameter patterns, e.g., struct={struct}');
      }
@@ -72,6 +81,8 @@
 
     return true;
   }
+
+
 
 
 /*
