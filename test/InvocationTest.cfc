@@ -1,5 +1,47 @@
 <cfcomponent output="false" extends="BaseTest">
+
+ <cffunction name="mismatchedArgumentTypesShouldFail" mxunit:expectedException="NamedArgumentConflictException">
+ <cfscript>
+  mock.reset();
+  mock.foo(bar='{string}').returns('bar');
+  mock.foo('asdasdasdasd') == 'bar' ;
+  </cfscript>
+</cffunction>
+
 <cfscript>
+
+function wildcardRodeo() {
+  mock.foo('{*}').returns('asd');
+
+  fail( 'works in argument matcher, but not yet in registry' );
+
+  assertEquals( mock.foo() , 'asd' );
+  assertEquals( mock.foo(123) , 'asd' );
+  assertEquals( mock.foo() ,'asd' );
+  assertEquals( mock.foo(a),'asd' );
+
+  mock.reset();
+
+  mock.foo('{+}').returns('asd');
+  assertEquals( mock.foo('asdasd') , 'asd' );
+  assertEquals( mock.foo(123) , 'asd' );
+  assertEquals( mock.foo(s) ,'asd' );
+  assertEquals( mock.foo(a),'asd' );
+}
+
+function testNamedArgsException() {
+
+  mock.foo(bar=1).returns('asd');
+  assert( mock.foo(bar=1) == 'asd' );
+
+  mock.foo(bar='{string}').returns('bar');
+  assert( mock.foo(bar='asdasdasdasd') == 'bar' );
+  mock.reset();
+
+  mock.foo('{string}').returns('bar');
+  assert( mock.foo('asdasdasdasd') == 'bar' );
+
+}
 
  function canUnregisteredMockReturnNull(){
    mock.reset();
