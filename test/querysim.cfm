@@ -1,89 +1,88 @@
-<!--- QuerySim.cfm by hal.helms@TeamAllaire.com --->
-<cfsetting enablecfoutputonly="Yes">
 
-<!---
-UserInfo
-userID,firstName,lastName,userGroups
-100|Stan|Cox|33
+<!--------------------------------------------------------------------
+Original QuerySim.cfm by hal.helms@TeamAllaire.com
+Update by bill s. - 04.09.2009
 
-returns a query called "UserInfo" with 4 columns of information about Stan Cox.
+This will only work in ColdFusion 8 and later due to conditional
+syntax usage - && in lieu of AND, and i++, etc.
 
---->
+This decouples string parsing logic into a somewhat testable function.
+For some reason, the orginal was throwing a list parsing exception on
+what appeared to be normal text. So, it was dissasembled and i decided
+to use java's String.split(regex) instead.
+
+Note, one possibly major omission from the original is the lack of
+reading querysim info from a profile file; ie, .ini. This was omitted
+because 'i' don't use that.
+--------------------------------------------------------------------->
+
+<cfsetting enablecfoutputonly="yes">
+<cfscript>
+ local.queryName = '';
+ local.raw = '';
+ local.q = chr(0);
+
+ if (thistag.HasEndTag and thistag.ExecutionMode is 'start'){
+	//no worries
+ }
+
+ else if (thistag.HasEndTag and thistag.ExecutionMode is 'end'){
+   local.raw = trim( Thistag.generatedContent );
+	 thistag.generatedContent = '';
+   local.q = parse(local.raw);
+   setVariable( 'caller.' & local.queryName, local.q );
+ }
 
 
-<cfif thistag.HasEndTag
-  AND thistag.ExecutionMode IS "start">
-        <!--- do nothing --->
-<cfelseif thistag.HasEndTag AND thistag.ExecutionMode IS "end">
-        <cfset RawData = Trim( Thistag.generatedContent )>
-        <cfset Thistag.generatedContent = "">
+function parse(input){
+   var s = trim(input);
+   var lines = s.split('\n');
+   var line = '';
+   var i = 1;
+   var j = 1;
+   var columnListLine = -1;
+   var queryName = '';
+   var columnList = '';
+   var q = '';
+   var row = '';
 
-        <cfset lineNum = 0>
-        <cfloop list="#RawData#" delimiters="#chr(10)##chr(13)#" index="line">
-                <cfset lineNum = lineNum + 1>
+  for(i; i <=  arrayLen(lines); i ++ ){
+     line = lines[i];
 
-                <cfset thisLineData = Trim(ListLast(line, "="))>
+     //to do: simply ignore blank lines or lines with only whitespace.
+     //if ( refind ( line, '^[[:space:]]*$' ) ) continue;
 
-                <!--- first line is the query name --->
-                <cfif lineNum IS 1>
-                        <cfset myQueryname = thisLineData >
+     if(line != '' && queryName == '') {
+         queryName = lines[i];
+         setQueryName(queryName);
+         columnListLine = i+1;
+         continue;
+     }
 
-                <!--- second line is the , delimited column List --->
-                <cfelseif lineNum IS 2>
-                        <cfset myColumnList = thisLineData>
-                        <cfset aQuery = QueryNew( myColumnList )>
+     if(i == columnListLine) {
+       columnList = lines[i];
+       q = queryNew(columnList);
+       continue;
+     }
 
-                <!--- the rest are | delimited list of values --->
-                <cfelse>
-                        <!--- add a row to the query --->
-                        <cfset QueryAddRow( aQuery )>
+     if(line != ''){
+      row = line.split("\|");
+			queryAddRow(q);
+			 for(j=1; j <= arrayLen(row); j++){
+			   if(j <= listLen(columnList)) querySetCell(q, listGetAt(columnList,j) ,row[j]);
+			  }
+       continue;
+     }
 
-                        <cfset colNum = 0>
-                        <cfloop list="#myColumnList#" delimiters="," index="mycolumn">
-                                <cfset colNum = colNum + 1>
-                                <cfif ListLen( thisLineData )>
-                                        <cfif ListGetAt(thisLineData, colNum, '|' ) NEQ "null">
-                                                <cfset QuerySetCell(aQuery, mycolumn, ListGetAt(thisLineData, colNum, "|"))>
-                                        </cfif>
-                                <cfelse>
-                                        <cfset QuerySetCell(aQuery, mycolumn, "")>
-                                </cfif>
-                        </cfloop>
-                </cfif>
+   }//end for()
 
-        </cfloop>
+   return q;
+  } //end parse()
 
-        <cfset SetVariable( 'caller.' & myQueryname, aQuery )>
 
-<cfelse>
+  function setQueryName(qName){
+    local.queryName = qName;
+  }
 
-        <cfif NOT FileExists( "#attributes.SimFile#" )>
-                <cfoutput>QuerySim encountered a problem when trying to read the associated ini file. This may be due to a missing file or an incorrect path. The SimFile must be an absolute path.</cfoutput>
-        </cfif>
-
-        <cfset listOfColumns = GetProfileString( "#attributes.SimFile#", "#attributes.QueryName#", "QueryColumns" )>
-
-        <cfset aQuery = QueryNew( listOfColumns )>
-
-        <cfloop from="1" to="100" index="i">
-                <cfset simData = GetProfileString( "#attributes.SimFile#", "#attributes.QueryName#", "SimData#i#" )>
-
-                <cfif NOT Len( Trim( simData ) )>
-                        <cfbreak>
-                </cfif>
-
-                <cfset QueryAddRow( aQuery )>
-
-                <cfloop from="1" to="#ListLen( listOfColumns )#" index="j">
-                        <cfset QuerySetCell( aQuery, Trim( ListGetAt( listOfColumns, j ) ), ListGetAt( simData, j, '|' ) )>
-                </cfloop>
-        </cfloop>
-
-        <cfif IsDefined('attributes.rQueryName')>
-                <cfset SetVariable( 'caller.' & attributes.rQueryName, aQuery )>
-        <cfelse>
-                <cfset SetVariable( 'caller.' & attributes.QueryName, aQuery )>
-        </cfif>
-
-</cfif>
+</cfscript>
 <cfsetting enablecfoutputonly="No">

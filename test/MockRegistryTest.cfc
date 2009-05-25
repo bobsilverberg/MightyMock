@@ -136,7 +136,11 @@ function getRegisteredBehavior(){
   assertEquals('returns',actual);
 }
 
+
+
+
 function resetRegisteredBehavior(){
+
   mr.register('foo',args);
   mr.updateRegistry('foo',args,'returns', 100);
   actual = mr.getRegisteredBehavior('foo',args);
@@ -144,12 +148,14 @@ function resetRegisteredBehavior(){
   assertEquals('returns',actual);
 
   mr.updateRegistry('foo', args, 'returns', '{undefined}');
+
+
   try{
     q = mr.getRegisteredBehavior('foo',args);
     debug(q);
     fail('should not get here');
   }
-  catch(UndefinedBehaviorException e){
+  catch(UnmockedBehaviorException e){
      debug(e);
    }
   //assertEquals('undefined',actual);

@@ -26,6 +26,20 @@ function compareStructKeys() {
 
 }
 
+function dualNamedAndOrderedArgsShouldBeAllowed() {
+  var literal1 = { foo='bar', bar=321654};
+  var pattern1 = { foo='{string}', bar='{numeric}'};
+  var literal2 = { 1='bar', 2=321654};
+  var pattern2 = { 1='{string}', 2='{numeric}'};
+
+  actual = matcher.match(literal1,pattern1) ;
+  assert(actual,'did not match #pattern1.toString()#');
+
+  actual = matcher.match(literal2,pattern2) ;
+  assert(actual,'did not match #pattern2.toString()#');
+
+}
+
 function namedArgumentPatternTest() {
   var literal = { foo='bar', bar=321654};
   var pattern = { foo='{string}', bar='{numeric}'};

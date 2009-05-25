@@ -28,6 +28,7 @@
 
   }
 
+  //intentional failure
   function peepWhatAVerificationFailureLooksLike(){
     //The component under test needs data provided by the collaborator
     var comp = createObject('component','TheComponent');

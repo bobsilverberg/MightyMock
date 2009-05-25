@@ -75,7 +75,9 @@
     return this.registryDataMap['behaviordata_' & id];
   }
 
-  function getRegisteredBehavior(target,args){
+
+
+ function getRegisteredBehavior(target,args){
   	var mock = findMock(target,args);
   	if (mock.returns != '{undefined}') return 'returns';
   	if (mock.throws != '{undefined}') return 'throws';
@@ -143,11 +145,12 @@
 
   function reset(){
     this.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	this.invocationRecord =  queryNew('id,time,status,pattern');
-	this.registryDataMap={};
-	this.argMap = {};
+	  this.invocationRecord =  queryNew('id,time,status,pattern');
+	  this.registryDataMap={};
+	  this.argMap = {};
   }
-	</cfscript>
+
+</cfscript>
 
 <cffunction name="getInvocationRecordsById">
   <cfargument name="target" type="string" />
