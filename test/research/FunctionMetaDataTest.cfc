@@ -17,6 +17,8 @@ function peepCFPage(){
   request.foo = 'bar';
   debug( ctx.getApplicationName() );
   
+  debug(ctx.instance);
+  
    pp = createObject('java' ,'coldfusion.runtime.CFPage');
  debug(pp);  
 
