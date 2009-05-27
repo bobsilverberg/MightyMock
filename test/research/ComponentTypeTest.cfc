@@ -99,7 +99,6 @@ spyvar = vars.bind('mySpyVar');
 
     mycfc._$dump('dump missing method?');
     mycfc.foo().returns('i am here');
-
     a = mycfc.foo();
     debug(a);
     assertEquals('i am here',a  );
