@@ -2,15 +2,31 @@
 <cfscript>
 
 function addFunctionToCfc() {
- poc = createObject('component', 'PlainOldCFCNoMethods');
- proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
+  cfc = createObject('java', 'coldfusion.runtime.CFComponent');
+  poc = createObject('component', 'PlainOldCFCNoMethods');
+  proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
+  debug(proxy.toString());
+  debug(proxy);
+  sargs = {};
+  retVal = proxy.invoke('run',sargs, getPageContext());
+  assert('running'==retVal);
 
- debug(proxy);
+  cfpage = getPageContext().getPage();
+  proxy.page._set( 'tempMethod', dummy );
+  t =  proxy.page._get( 'tempMethod' );
+  assert('dummy' == t() );
+  debug( getMetaData(proxy.page) );
 
+  debug(cfc);
+  //proxy.page.registerUDFs();
+  retVal = proxy.invoke('tempMethod',sargs, getPageContext());
 
 
 }
 
+function dummy() {
+ return 'dummy';
+}
 
 function $udfMethodTest() {
  filter = createObject('java', 'coldfusion.filter.FusionFilter');
