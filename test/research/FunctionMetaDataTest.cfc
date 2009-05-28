@@ -1,9 +1,34 @@
 <cfcomponent output="false" extends="mxunit.framework.TestCase">
 <cfscript>
-  
+
+function addFunctionToCfc() {
+ poc = createObject('component', 'PlainOldCFCNoMethods');
+ proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
+
+ debug(proxy);
+
+
+
+}
+
+
+function $udfMethodTest() {
+ filter = createObject('java', 'coldfusion.filter.FusionFilter');
+ method = createObject('java', 'coldfusion.runtime.UDFMethod');
+ cfc = createObject('java', 'coldfusion.runtime.CFComponent');
+ ctx = getPageContext().getFusionContext();
+ debug(ctx);
+ debug(method);
+ debug(cfc);
+ debug(filter);
+
+ //debug(method.getPagePath());
+
+}
+
 function peepCFPage(){
   //debug( getPageContext() );
-  getPageContext().setCurrentLineNo(911);   
+  getPageContext().setCurrentLineNo(911);
   debug(  getPageContext().getCurrentLineNo()  );
   //This is what we want!
   ctx = getPageContext().getFusionContext();
@@ -11,38 +36,38 @@ function peepCFPage(){
   hookie = 'hooky';
   //CFPage object
   //getPageContext().getFusionContext().setCurrentLineNo( javacast('int', 234) );
-  
+
   debug( ctx.parent._autoscalarize('hookie') );
-  
+
   request.foo = 'bar';
   debug( ctx.getApplicationName() );
-  
-  debug(ctx.instance);
-  
-   pp = createObject('java' ,'coldfusion.runtime.CFPage');
- debug(pp);  
 
-     
+  debug(ctx.instance);
+
+   pp = createObject('java' ,'coldfusion.runtime.CFPage');
+ debug(pp);
+
+
 }
 
-  
-  
+
+
  function metaDataUsingDots(){
    debug( lookAtMe.getAccess() );
    debug( lookAtMe.getReturnType() );
    debug( lookAtMe.getMetaData() );
    debug( lookAtMe() );
- }   
-    
+ }
+
  function peepMethodMetaData() {
    md1 =  getMetaData(lookAtMe) ; //no parent info
-   
+
    debug( lookAtMe.getClass() );
-   
-   
+
+
    //getDeclaredMethod(java.lang.String, java.lang.Class[])
    ptypes = [];
-   //debug( lookAtMe.getClass().getDeclaredMethod('runFunction',ptypes) );  
+   //debug( lookAtMe.getClass().getDeclaredMethod('runFunction',ptypes) );
    //ret = lookAtMe.runFunction('ads','ads');
 
 
@@ -50,22 +75,22 @@ function peepCFPage(){
 
    for(i=1;i < arrayLen(methods);i++){
     n = methods[i].getName();
-    
+
     if(n == 'runFunction'){
-      debug(n);	
+      debug(n);
       debug(  methods[i] );
       //debug(  methods[i].getDeclaringClass().getName()  );
       debug(  methods[i].getTypeParameters() );
       args = [1,2];
      //debug( methods[i].invoke('ads', args) );
     }
-    
-  
-   }  
-   
- return; 
- 
- 
+
+
+   }
+
+ return;
+
+
    for(i=1;i < arrayLen(methods);i++){
     debug(  methods[i].getName() );
     debug(  methods[i] );
@@ -90,7 +115,7 @@ function peepVars(){
 
 function execCfcViaJava(){
    jp = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(this);
-   
+
    debug( jp.toString() );
    debug('javaproxy');
    debug(jp);
@@ -98,36 +123,36 @@ function execCfcViaJava(){
    args = {p='arg1',2='sdf',3='hjk'};
    v = jp.invoke('lookAtMePub', args, getPageContext());
    debug(v);
-   
+
    debug( jp.values() );
-   
-   
+
+
    debug( jp.isInstanceOf('mxunit.framework.TestCase') );
-   debug( jp.writeReplace() ); 
+   debug( jp.writeReplace() );
    debug( jp.resolveMethod('lookAtMePub',true) );
-   
+
     newvar = jp.bindInternal('newvar');
     newVar.set(123);
     debug(newvar);
     debug(newvar.getValue());
     jp.put('myProxyMethodRef',lookAtMe);
     foo = jp.get( 'myProxyMethodRef' );
-    
+
     newPubMethod = jp.bindInternal('newMethod');
     newVar.set(lookAtMe);
-    
+
     debug(jp.page); //get the entire page context
-    debug( jp.writeReplace() ); 
-    
-    
+    debug( jp.writeReplace() );
+
+
     debug(foo);
-    debug(foo()); 
-   
+    debug(foo());
+
 }
 
 function attributeCollectionPeep(){
-   ac = createObject('java' ,'coldfusion.runtime.AttributeCollection'); 
-   debug( ac ); 
+   ac = createObject('java' ,'coldfusion.runtime.AttributeCollection');
+   debug( ac );
 }
 
 function execFunctionViaJava(){
@@ -139,24 +164,24 @@ function execFunctionViaJava(){
    debug(jp.getAccess());
    //v = jp.invoke(getPageContext().getFusionContext());
  // invoke(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object[])
-   
+
    args = [1,2];
    sargs = {};
    sargs.p = 'imaparam';
    v = jp.invoke(this, 'asd', getPageContext().getPage(), sargs);
    debug(v);
    assertEquals( sargs.p, v );
-   
+
    dump(jp.getMethodAttributes());
-   
+
    className = jp.getClass().getName();
    debug(className);
-   
+
   //  class = createObject('java' ,'java.lang.Class').forName( className & '.class' );
-   
-   
- 
-   
+
+
+
+
 }
 
 
@@ -167,11 +192,11 @@ function introspectCFFunctionJava(){
    args = [1,2];
    v = javaproxy.invoke('lookAtMePub', args, getPageContext());
    debug(v);
-   
+
    debug( lookAtMe.getClass().getSuperClass().getName() );
    //debug( lookAtMe.getClass() );
-   
-   
+
+
    return;
    superClass = createObject('java' ,lookAtMe.getClass().getSuperClass().getName());
    debug(superClass.getMethodAttributes());
@@ -190,12 +215,12 @@ function introspectCFFunctionJava(){
   debug( "lookAtMe.getClass().getDeclaredField('metaData')" );
   debug( lookAtMe.getClass().getDeclaredField('metaData') );
   debug( lookAtMe.getClass().getDeclaredField('metaData').toString()  );
- 
-  
-  
-  
+
+
+
+
 }
- 
+
 
 </cfscript>
 <cffunction name="lookAtMePub" returntype="Any" access="public">
