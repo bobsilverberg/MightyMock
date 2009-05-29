@@ -1,25 +1,45 @@
 <cfcomponent output="false" extends="mxunit.framework.TestCase">
 <cfscript>
 
+function runMethodUsingProxy(){
+  poc = createObject('component', 'PlainOldCFCNoMethods');
+  proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc.echo);
+  cfcProxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);    
+  cfpage = getPageContext().getPage();
+  args = {1='fu'};
+  debug(cfcProxy);
+  debug(proxy);
+  //proxy.invoke(getPageContext());
+  //proxy.invoke(java.lang.Object, java.lang.String, java.lang.Object, java.util.Map)
+  retVal = proxy.invoke('', '', cfcProxy.page, args);
+  debug(retVal);
+  
+}
+
 function addFunctionToCfc() {
+  //cfp = createObject('java' ,'coldfusion.runtime.CfJspPage ');
   cfc = createObject('java', 'coldfusion.runtime.CFComponent');
   poc = createObject('component', 'PlainOldCFCNoMethods');
   proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
   debug(proxy.toString());
   debug(proxy);
+  
+  //debug( cfp );
+  
   sargs = {};
   retVal = proxy.invoke('run',sargs, getPageContext());
   assert('running'==retVal);
 
+  pageCtx = getPageContext();
+  debug( pageCtx );
   cfpage = getPageContext().getPage();
   proxy.page._set( 'tempMethod', dummy );
   t =  proxy.page._get( 'tempMethod' );
   assert('dummy' == t() );
   debug( getMetaData(proxy.page) );
 
-  debug(cfc);
+  debug(cfc); //type CFPage > CfJspPage
   //proxy.page.registerUDFs();
-  retVal = proxy.invoke('tempMethod',sargs, getPageContext());
 
 
 }

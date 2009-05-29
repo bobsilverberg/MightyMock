@@ -8,6 +8,9 @@
   function run() {
    return 'running';
 }
+function echo(arg){
+ return arguments.arg;  
+}
 
 </cfscript>
 </cfcomponent>
