@@ -1,6 +1,20 @@
 <cfcomponent output="false" extends="mxunit.framework.TestCase">
 <cfscript>
 
+function makeCfc(){
+   cfc = createObject('java', 'coldfusion.runtime.CFComponent');
+   bean =  createObject('java', 'coldfusion.runtime.StructBean');
+   debug(bean);
+   constructors = cfc.getClass().getConstructors(); 
+   args = [];
+   debug( constructors[1] );
+   
+   expando = constructors[1];
+   expando.setAccessible(true);
+   //instance = expando.newInstance(args); 
+   
+}
+
 function runMethodUsingProxy(){
   poc = createObject('component', 'PlainOldCFCNoMethods');
   proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc.echo);

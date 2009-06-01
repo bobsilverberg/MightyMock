@@ -1,0 +1,46 @@
+- mock should creat a light-weight, "fast" (empty) mock, a type safe mock, and a
+  partial mock (or spy).
+  -- do not alter meta data, instead, set property.
+      maybe need to proxy the onmissing method to new empty object and pass that
+      around and not the MightyMock. Maybe need to delegate all request to some
+      type of filter or Filter Interceptor. May be mo' better than just 
+      onMissingMethod. Maybe the mock itself is a component with various collections
+      of properties: name, type, registered behaviours, invocation records, etc.
+  
+ 
+- mock should record all invocations and store literal parameters
+- verifying by pattern should also be possible
+  e.g., 
+   register:
+       mock.foo(1,2).returns();
+       mock.foo(4,5).return();
+   actual exec:
+       mock.foo(1,2);
+       mock.foo(1,2);
+       mock.foo(4,5);
+       
+   verify:
+       mock.verifyTimes(3).foo('{numeric}','{numeric}');
+   
+   And vice versa:
+      mock..foo('{numeric}','{numeric}').returns();
+   
+   actual exec:
+        mock.foo(1,2);
+        mock.foo(1,2);
+        mock.foo(4,5);
+
+    verify:
+        mock.verifyTimes(2).foo(1,2);
+        mock.verifyTimes(1).foo(4,5);
+   
+- verbose . maybe should persist actual literal arguments in addition to hash
+- 
+
+
+
+
+
+
+
+
