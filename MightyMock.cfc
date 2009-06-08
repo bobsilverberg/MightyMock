@@ -98,8 +98,8 @@
 			proxy.variables.DEBUGMOCK =  DEBUGMOCK;
 			proxy._$GETPREVIOUSSTATE  =  _$GETPREVIOUSSTATE;
 			proxy.variables._$GETPREVIOUSSTATE  =  _$GETPREVIOUSSTATE;
-			proxy.MOCKSPY = MOCKSPY;
-			proxy.variables.MOCKSPY = MOCKSPY;
+			proxy.MOCK = MOCK;
+			proxy.variables.MOCK = MOCK;
 			proxy.VERIFYATLEAST=VERIFYATLEAST;
 			proxy.variables.VERIFYATLEAST=VERIFYATLEAST;
 			proxy.THROWS = THROWS ;
@@ -218,23 +218,52 @@
  //Use this behavior for partial mocks
  function _$spyOnMissingMethod(target,args) {
    //we know it's a spy, so no need for conditional
-   _$dump('how do we know when to execute and when to register?');
-   _$dump(target);
-   _$dump(args);
-/*
-   what do we know?
-   1. method already exits in real component, maybe ...
+   var spyMethod = '';
+   var retVal = '';
+  // _$dump('how do we know when to execute and when to register? A:when target == mock');
+  // _$dump(target);
+  // _$dump(args);
+  // _$dump(currentState);
 
-*/
-   //This is how we execute the original method
-   methodToExec = spy[target];
-   _$dump( methodToExec(args) );
+   if( currentState == 'verifying'){
+      verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
+      _$setState('idle');
+      return this;
+   }
 
-   /*
-     If not in registry, register or execute?
+   if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
+	   registry.register(target,args);
+	   currentMethod['name'] = target;
+	   currentMethod['args'] = args;
+	   _$setState('idle');
+	   return this;
+   }
 
-   */
-   return;
+   if(!registry.exists(target,args)) {
+    try{
+       spyMethod = spy[target];
+   	   retVal = spyMethod(args);
+   	   registry.addInvocationRecord(target,args,'ok');
+   	   return retVal;
+   	 }
+		 catch(any e){
+       registry.addInvocationRecord(target,args,'error-#e.type#');
+       _$throw(e.type,e.message,e.detail);
+		 }
+   }
+   else {
+   	 //maybe handle patterns here?!
+   	 try{
+   	   retVal = _$invokeMock(target,args);
+   	   return retVal;
+   	 }
+		 catch(any e){
+       registry.addInvocationRecord(target,args,'error-#e.type#');
+       _$throw(e.type,e.message,e.detail);
+		 }
+   }
+
+   return this;
 
 
   //Check to see if a spy object is registered
@@ -355,8 +384,8 @@
    return this;
   }
 
-  function mockSpy(){
-   register();
+  function mock(){
+   _$setState('registering');
    return this;
   }
 

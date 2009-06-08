@@ -15,6 +15,22 @@
     m1.reset();
     m1.foo().returns('bah');
     assert( m1.foo() == 'bah');
+
+    m1.reset();
+    m1.writeToLog ('Hello.');
+    m1.writeToLog ('Goodbye.');
+
+    m1.writeToLog ('Hello.');
+    m1.writeToLog ('Goodbye.');
+
+    m1.verify().writeToLog ('Hello.');
+    m1.verify().writeToLog ('Goodbye.');
+
+    // m1.verifyTimes(2).writeToLog ('{string}');
+
+
+
+
  }
 
 

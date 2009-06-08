@@ -7,7 +7,7 @@
  --->
 
   <cffunction name="init">
-    <cfargument name="args">  
+    <cfargument name="args">
     <cfreturn this />
   </cffunction>
 
@@ -17,6 +17,6 @@
 	</cffunction>
 
 	<cffunction name="leaveMeAlone" access="public" output="true" returntype="Any">
-		<cfreturn 'Leave me alone' />
+		<cfreturn 'Leave me alone.' />
 	</cffunction>
 </cfcomponent>
