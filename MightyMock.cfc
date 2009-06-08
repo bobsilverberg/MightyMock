@@ -7,39 +7,22 @@
       unexpected behavior if not used correctly.
 ------------------------------------------------------------------------------*/
 
-//should be separate object!
- function mockify(objfunc, data){
-  var name = getMetaData(objfunc).name;
-  var template = '<cfcomponent><cffunction name="#name#" access="public"><cfreturn "bar"></cffunction></cfcomponent>';
-  var id = createUUID();
-  var fileName = expandPath('/mightymock/#id#.cfc');
-  var tempO = '';
-  var oCfcPath = objfunc.getPagePath();
-  //var targetO = '';
-  var targetO = createObject('java','coldfusion.cfc.CFCProxy').init(oCfcPath);
-  method = targetO.getThisScope();
-  fileWrite(fileName,template);
-  tempO = createObject( 'component', id );
 
-  fileDelete(fileName);
-  obj.func = tempO[name];
-
-  return targetOs;
- }
-
-
+/*------------------------------------------------------------------------------
+                    Creational Methods - init() ... create()
+------------------------------------------------------------------------------*/
  function init(){
-   var localSpy = '';
    var proxyVars = '';
-
    /*
     Make "fast mock" and bypass scope acrobatics.
    */
-   if( arguments.size() eq 0 ) return this;
+   if( arguments.size() eq 0 ) {
+     mocked.name = 'Undefined MightyMock Object';
+     return this;
+   };
 
    if( arguments.size() eq 1){
-     getMetaData(this).name = arguments[1];
-     getMetaData(this).fullname = arguments[1];
+     mocked.name = arguments[1];
      return this;
    }
 
@@ -56,20 +39,34 @@
   }
  }
 
+
+ // Keeps all methods in component. delegates mocked method calls
+ // to MightyMock
  function createSpy(name){
-   var localSpy = createObject('component', name);
-   _$throw('UnimplementedException','createSpy(name) is not yet implemented','');
+   try{
+	    proxy = createMultipleTypeSafeMocks(name);
+	    proxy.spy = createObject('component',name);
+	    proxy.variables.spy = createObject('component',name);
+	    proxy.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
+	    proxy.variables.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
+	    return proxy;
+		 }
+		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
+		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
+	 }
+
  }
 
+ //Clears all methods in object to be mocked.
  function createMultipleTypeSafeMocks(name){
-     var localSpy = createObject('component', name); //need to implement initParams
      var proxy = createObject('component', name);
-     //setSpy(localSpy); //To Do: Change logic o invoke spy methods
+     mocked.name = name;
      structClear(proxy);
      proxy.snif = _$snif; //sniffer for variables scope
      proxyVars = proxy.snif();
      structClear(proxyVars);
      proxy.variables = proxyVars;
+
 
 	/* Need to write to THIS and VARIABLES scope because some weird scoping
 	   issue when invoking a variable-scoped method from within another
@@ -92,19 +89,6 @@
 	   All is well ...
 
 
-*/
-	// For this Impl, we might have to be more selective in order to help
-	// with performance ...
-
-
-
-/*
-     for (item in localVars){
-       if(!item == 'this'){
-         proxy[item] = variables[item];
-         proxy.variables[item] =  variables[item];
-       };
-     }
 */
 
      	proxy.RETURNS = RETURNS ;
@@ -159,6 +143,12 @@
 			proxy.variables.VERIFYTIMES = VERIFYTIMES;
 			proxy._$GETREGISTRY = _$GETREGISTRY;
 			proxy.variables._$GETREGISTRY = _$GETREGISTRY;
+			proxy.GETMOCKED = GETMOCKED;
+			proxy.variables.GETMOCKED = GETMOCKED;
+			proxy.MOCKED = MOCKED;
+			proxy.variables.MOCKED = MOCKED;
+			proxy._$DUMP = _$DUMP;
+			proxy.variables._$DUMP = _$DUMP;
 
      return proxy;
 
@@ -166,8 +156,16 @@
 
 
  function setSpy(iSpy){
-  spy = arguments.iSpy;
+   spy = arguments.iSpy;
  }
+
+
+/*--------------------------------------------------------------------
+             * * * * Behavioral Methods * * * *
+
+       								Main entry points.
+
+--------------------------------------------------------------------*/
 
  function onMissingMethod(target,args){
    var tempMock = chr(0);
@@ -188,34 +186,6 @@
        return _$invokeMock(tempMock['target'],tempMock['args']);
       }
       catch(MismatchedArgumentPatternException e){}
-     }
-
-  //Check to see if a spy object is registered
-     if(isObject(spy)){
-       if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
-         registry.register(target,args);
-         currentMethod['name'] = target;
-         currentMethod['args'] = args;
-         return this;
-       }
-       else{
-         _$setState('executing');
-         try{
-           if (structIsEmpty(args)){
-             temp = evaluate('spy.#target#()');
-           }
-           else{
-             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!! To Do
-           }
-
-           registry.addInvocationRecord(target,args,'ok'); //record call to spy
-         }
-         catch(any e){
-           _$throw(e.type & '_asd',e.getMessage(),e.getDetail());
-           registry.addInvocationRecord(target,args,'error'); //record call to spy
-         }
-         return temp;
-       }
      }
 
    //Now we try to register the mock.
@@ -243,6 +213,59 @@
 
    return chr(0);
  }
+
+
+ //Use this behavior for partial mocks
+ function _$spyOnMissingMethod(target,args) {
+   //we know it's a spy, so no need for conditional
+   _$dump('how do we know when to execute and when to register?');
+   _$dump(target);
+   _$dump(args);
+/*
+   what do we know?
+   1. method already exits in real component, maybe ...
+
+*/
+   //This is how we execute the original method
+   methodToExec = spy[target];
+   _$dump( methodToExec(args) );
+
+   /*
+     If not in registry, register or execute?
+
+   */
+   return;
+
+
+  //Check to see if a spy object is registered
+  /*   if(isObject(spy)){
+       if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
+         registry.register(target,args);
+         currentMethod['name'] = target;
+         currentMethod['args'] = args;
+         return this;
+       }
+       else{
+         _$setState('executing');
+         try{
+           if (structIsEmpty(args)){
+             temp = evaluate('spy.#target#()');
+           }
+           else{
+             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!! To Do
+           }
+
+           registry.addInvocationRecord(target,args,'ok'); //record call to spy
+         }
+         catch(any e){
+           _$throw(e.type & '_asd',e.getMessage(),e.getDetail());
+           registry.addInvocationRecord(target,args,'error'); //record call to spy
+         }
+         return temp;
+       }
+     }
+*/
+ } //end spy onMissingMethod
 
 
   function returns(){
@@ -322,8 +345,8 @@
     registry.reset();
 	  _$setState('idle');
     currentMethod = {};
-    getMetaData(this).name = 'MightyMock';
-    getMetaData(this).fullname = 'MightyMock';
+    //getMetaData(this).name = 'MightyMock';
+    //getMetaData(this).fullname = 'MightyMock';
     return this;
   }
 
@@ -387,7 +410,9 @@
   }
 
 
-
+ function getMocked() {
+  return mocked; //returns
+ }
 
 /*------------------------------------------------------------------------------
                           Private Instance Members
@@ -396,8 +421,8 @@ variables.registry = createObject('component','MockRegistry');
 matcher = createObject('component','ArgumentMatcher');
 verifier = createObject('component','Verifier');
 
-
-spy = chr(0);     //used if creating a partial mock.
+mocked = {};      //meta data about the object being mocked
+spy = chr(0);     //reference to the real object being mocked
 
 tempRule = [];    //tech debt for verfier
 

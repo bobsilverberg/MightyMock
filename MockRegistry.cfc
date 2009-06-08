@@ -39,10 +39,14 @@
     querySetCell(this.registry,'type', argType(args));
     querySetCell(this.registry,'method',target);
     querySetCell(this.registry,'argid',argId(args));
-    querySetCell(this.registry,'returns', '{undefined}');
+    querySetCell(this.registry,'returns', '');
+  //{undefined} //changed 06-09-09 in order to allow simplified syntax
+  //for mocks (not stubs) since mocks return void
     querySetCell(this.registry,'throws', '{undefined}');
     querySetCell(this.registry,'time', getTickCount());
     this.argMap[id] = args;
+    //sets default behavior to null
+    updateRegistry(target,args,'returns','');
  }
 
   function getArgumentMapEntry(target,args){

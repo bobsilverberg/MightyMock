@@ -17,7 +17,7 @@ What has been invoked?
 function debug(mock,verbose){
  var mockBug = {};
  var registry = mock._$getRegistry();
- structInsert(mockBug," MockName", getMetaData(mock).name );
+ structInsert(mockBug," MockName", mock.getMocked().name );
  structInsert(mockBug, 'Registered Methods', registry.getRegistry());
  structInsert(mockBug, 'Invocation Records', registry.invocationRecord);
  structInsert(mockBug, 'Returns and Throws Data' , registry.registryDataMap);

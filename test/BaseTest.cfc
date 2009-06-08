@@ -10,11 +10,12 @@
     x.xmlRoot = XmlElemNew(x,"MyRoot");
     dummy = 'mightymock.test.fixture.Dummy';
     mockery = 'mightymock.test.fixture.Mockery';
-    mock = createObject('component','mightymock.MightyMock').init(dummy);
+    mock = createObject('component','mightymock.MightyMock').init();
 
 
     mockFactory = createObject('component','mightymock.MightyMockFactory').init();
     $ = mockFactory.create; //jQuery-like alias for multi-mock creation
+    $$ = mockFactory.createSpy; //jQuery-like alias for multi-mock creation
 </cfscript>
 
   <cffunction name="getQ" access="private">
@@ -31,7 +32,7 @@
 			<cf_querysim>
 			user
 			id,f_name,l_name,group
-			1|bobo|the clown|22
+			1|bobo|the assclown|22
 			2|mighty|mouse|22
 			3|pocito|mas|22
 			4|kwai chang|caine|22

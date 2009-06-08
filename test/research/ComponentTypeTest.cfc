@@ -57,11 +57,12 @@ spyvar = vars.bind('mySpyVar');
     cfc = createObject('component','mightymock.test.fixture.MyComponent');
     cfc.sniff = sniff;
     vars = cfc.sniff();
-    spyvar = vars.bind('mySpyVar');
+    spyvar = vars.bind('MYSPYVAR'); //set in the variables scope of cfc
     spyvar.set( 'spyvar value' );
     debug(spyvar.toString());
+    debug(spyvar.getClass().getName());
 
-     for(item in vars){
+    for(item in vars){
     //if(item != 'this'){
      debug(item);
      //debug(  vars[item]  );
@@ -70,11 +71,67 @@ spyvar = vars.bind('mySpyVar');
 
     d = cfc.getInjectedSpyVar();
     debug(d);
+    //MYSPYVAR does not exist in cfc
+    assertEquals('spyvar value',d);
    }
+
+ function peepObjectHandler() {
+   ObjectHandler = createObject("java","coldfusion.runtime.java.ObjectHandler");
+   dump(ObjectHandler);
+ }
+
+
+
+//intentional runtime error
+function returnNonExistentVar() {
+ // var blank = -1;
+  return blank;
+
+}
+
+function threadLocalTest() {
+ t = createObject('java', 'java.lang.ThreadLocal');
+ t.set(returnNonExistentVar);
+ foo =t.get();
+ foo();
+ debug(t);
+}
+//try to add var blank to the above
+
+ function addToFunctionTest() {
+
+   dump( createObject('java','coldfusion.runtime.UDFMethod') );
+
+   returnNonExistentVarScope = returnNonExistentVar.getSuperScope();
+   dump( returnNonExistentVarScope );
+   foo = [1,2,3];
+   //xcfvar = returnNonExistentVarScope.bindInternal('blank', foo);
+  // cfvar.set(returnNonExistentVarScope);
+   //dump(cfvar); return;
+   cfvar = returnNonExistentVarScope.bind('blank', foo);
+   //returnNonExistentVarScope.remove(cfvar);
+   myVar = createObject('java','coldfusion.runtime.Variable').init('blank');
+   myVar.set(foo);
+   //dump(myVar); setters/getters
+   returnNonExistentVarScope.putVariable(myVar);
+   returnNonExistentVarScope.setScopeType(0);
+
+   assertEquals(foo, returnNonExistentVar() );
+   debug(returnNonExistentVar());
+   assertFalse( structKeyExists(variables,'blank') );
+   debug(returnNonExistentVarScope.getScopeType());
+  }
 
   function peepTemplateProxy(){
    Class = createObject( "java", "java.lang.Class");
    templateProxy = Class.forName("coldfusion.runtime.TemplateProxy");
+   udf = createObject('java', 'coldfusion.runtime.UDFMethod');
+
+   dump(udf);
+   udf = Class.forName("coldfusion.runtime.UDFMethod");
+   //superScopeMeth = udf.getDeclaredMethod('getSuperScope');
+   args = [];
+   //debug(superScopeMeth.invoke(udf,args));
    scope = createObject("java","coldfusion.runtime.LocalScope").init();
    debug(scope);
   }
@@ -142,10 +199,14 @@ function sniff(){
  return variables;
 }
 
+
+
 </cfscript>
 
 <cffunction name="testType" access="private">
   <cfargument name="o" type="com.foo.bar">
 </cffunction>
+
+
 
 </cfcomponent>
