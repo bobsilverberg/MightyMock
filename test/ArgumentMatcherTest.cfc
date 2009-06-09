@@ -14,6 +14,54 @@ function setUp(){
  matcher = createObject('component','mightymock.ArgumentMatcher');
 }
 
+function anyShouldMatchAllTypes(){
+   var dumb = createObject('component' ,dummy); 
+   var actual = false;
+   var literal = { 1='bar', 2=321654};
+   var pattern = { 1='{any}', 2='{any}'};
+   
+   literal = { 1='bar', 2=dumb};
+   pattern = { 1='{any}', 2='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+   
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+
+   s = {1=1};
+   literal = { 1='bar', 2=s};
+   pattern = { 1='{any}', 2='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+
+   literal = { 1='bar', 2=a};
+   pattern = { 1='{any}', 2='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+
+   literal = { 1='bar', 2=q};
+   pattern = { 1='{any}', 2='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+
+   literal = { 1='bar', 2=this};
+   pattern = { 1='{any}', 2='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+
+   literal = { 1='bar', 2=this, 3=s, 4=a, 5='barbarmcfate'};
+   pattern = { 1='{any}', 2='{any}', 3='{any}', 4='{any}', 5='{any}'};
+   actual = matcher.match(literal,pattern) ;
+   assert(actual,'did not match #pattern.toString()#');
+ }
+
+function anyWildCardShouldWork(){
+  var literal = { foo='bar', bar=321654};
+  var pattern = { foo='{any}', bar='{any}'};
+  actual = matcher.match(literal, pattern);
+  assert(actual,'did not match #pattern.toString()#');
+}
+
 function compareStructKeys() {
   var literal = { foo='bar', bar=321654};
   var pattern = { fOo='{string}', baR='{numeric}'};
