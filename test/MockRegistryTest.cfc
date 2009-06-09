@@ -1,6 +1,18 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+
+function $findByPatternAnyBUG(){
+  var	 pattern = {foo='{any}'};
+  var args = {foo='asd'};
+  var res = mr.isPattern(pattern);
+  assert(res);
+
+  mr.register('foo',args);
+  o = mr.findByPattern('foo',args);
+  debug(o);
+}
+
 function $updateRegistryShouldAllowObjects(){
   obj = createObject('component','mightymock.test.fixture.MyComponent');
 	debug(obj);
@@ -75,6 +87,10 @@ function invokedNonExistentMethodWithMatchingPatternShouldBehaveAsPattern(){
   assertEquals( pArgs,behavior['args'] );
 
 }
+
+
+
+
 
 function invokedNonExistentMethodWithOutMatchingPatternShouldThrowException(){
 

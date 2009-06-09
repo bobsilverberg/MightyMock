@@ -7,8 +7,8 @@
       matcher = arguments.m;
 	  }
 
-	  this.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	  this.invocationRecord =  queryNew('id,time,status,pattern');
+	  this.registry =  queryNew('id,type,method,argid,returns,throws,time,args');
+	  this.invocationRecord =  queryNew('id,time,status,pattern,args');
 	  this.registryDataMap = {};
 	  this.argMap = {};
 
@@ -44,6 +44,12 @@
   //for mocks (not stubs) since mocks return void
     querySetCell(this.registry,'throws', '{undefined}');
     querySetCell(this.registry,'time', getTickCount());
+    try{
+    	querySetCell(this.registry,'args', args.toString());
+    }
+		catch(any e){
+      querySetCell(this.registry,'args', 'Component or Object. Cannot convert to String');
+    }
     this.argMap[id] = args;
     //sets default behavior to null
     updateRegistry(target,args,'returns','');
@@ -141,6 +147,12 @@
     querySetCell(this.invocationRecord,'time', getTickCount());
     querySetCell(this.invocationRecord,'status',status);
     querySetCell(this.invocationRecord,'pattern','');
+    try{
+    	querySetCell(this.invocationRecord,'args', args.toString());
+    }
+		catch(any e){
+      querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
+    }
  }
 
   function getRegistry(){

@@ -182,6 +182,7 @@
      if (!registry.isPattern(args)){ //pee-yew!
       try{
        //To Do: record the literal and invoke pattern behavior
+       //Record both if they exist. This will help for lookups
        tempMock = registry.findByPattern(target,args);
        return _$invokeMock(tempMock['target'],tempMock['args']);
       }
@@ -214,16 +215,22 @@
    return chr(0);
  }
 
+//--------------------------------------------------------------------------------------//
 
- //Use this behavior for partial mocks
+/*-------------------------------------------------------------------
+             * * * * Behavioral Methods * * * *
+
+       				Main entry point for Partia Mocks.
+
+-------------------------------------------------------------------*/
+
  function _$spyOnMissingMethod(target,args) {
    //we know it's a spy, so no need for conditional
    var spyMethod = '';
    var retVal = '';
+   var tempMock = '';
   // _$dump('how do we know when to execute and when to register? A:when target == mock');
-  // _$dump(target);
-  // _$dump(args);
-  // _$dump(currentState);
+    _$dump(target,args,currentstate);
 
    if( currentState == 'verifying'){
       verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
@@ -240,15 +247,23 @@
    }
 
    if(!registry.exists(target,args)) {
-    try{
+     _$dump(registry,'temp spy');
+  	 // tempSpy = registry.findByPattern(target,args);
+
+
+
+     try{
        spyMethod = spy[target];
+       //setVariable(target,spy[target]);
+   	   //need to capture the method being invoked else "spyMethod" is printed to stacktrace
    	   retVal = spyMethod(args);
    	   registry.addInvocationRecord(target,args,'ok');
+			 if(!isDefined('retVal')) return;
    	   return retVal;
    	 }
 		 catch(any e){
-       registry.addInvocationRecord(target,args,'error-#e.type#');
-       _$throw(e.type,e.message,e.detail);
+        registry.addInvocationRecord(target,args,'error-#e.type# #e.message#');
+        //_$throw(' #e.type#',e.message,e.detail);
 		 }
    }
    else {
@@ -259,43 +274,21 @@
    	 }
 		 catch(any e){
        registry.addInvocationRecord(target,args,'error-#e.type#');
-       _$throw(e.type,e.message,e.detail);
+       _$throw(' #e.type#',e.message,e.detail);
 		 }
    }
 
    return this;
 
-
-  //Check to see if a spy object is registered
-  /*   if(isObject(spy)){
-       if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
-         registry.register(target,args);
-         currentMethod['name'] = target;
-         currentMethod['args'] = args;
-         return this;
-       }
-       else{
-         _$setState('executing');
-         try{
-           if (structIsEmpty(args)){
-             temp = evaluate('spy.#target#()');
-           }
-           else{
-             temp = evaluate('spy.#target#()' ); //NOT WORKING with argumentCollection !!!! To Do
-           }
-
-           registry.addInvocationRecord(target,args,'ok'); //record call to spy
-         }
-         catch(any e){
-           _$throw(e.type & '_asd',e.getMessage(),e.getDetail());
-           registry.addInvocationRecord(target,args,'error'); //record call to spy
-         }
-         return temp;
-       }
-     }
-*/
  } //end spy onMissingMethod
 
+
+
+
+/*--------------------------------------------------------------------
+
+
+--------------------------------------------------------------------*/
 
   function returns(){
    var arg = '';
@@ -474,7 +467,9 @@ currentMethod = {};
 
 
 <cffunction name="_$dump">
-  <cfdump var="#arguments[1]#">
+  <cfloop from="1" to="#arrayLen(arguments)#" index="i">
+   <cfdump var="#arguments[i]#">
+  </cfloop>
 </cffunction>
 
 <cffunction name="_$throw">
@@ -483,5 +478,7 @@ currentMethod = {};
 	<cfargument name="detail" required="false" default="">
   <cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#" />
 </cffunction>
+
+
 
 </cfcomponent>

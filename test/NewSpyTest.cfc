@@ -1,6 +1,43 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+//fix this!
+function $testSpyWithPatterns() {
+  spy.mock().foo('{any}');
+
+  //should be in exec state
+  spy.foo('{any}');
+
+
+  debug(spy.debugMock());
+
+ spy.verify(1).foo('{any}');
+}
+
+
+ function sanityCheck() {
+   san = $('foo.bar');
+   san.mambo('{string}');
+   san.mambo('adasd');
+   san.verify().mambo('{string}');
+  }
+
+
+
+function mockedSpyMethodShouldReturnQuery() {
+   spy.mock().foo().returns( getQ() ) ;
+   assertEquals( 3 , spy.foo().recordCount );
+}
+
+
+function mockedSpyMethodShouldReturnQueryWhileOtherIsLeftBe() {
+   spy.mock().mockMe().returns( getQ() ) ;
+   retVal = spy.leaveMeAlone();
+   assertEquals( 3 , spy.mockMe().recordCount );
+   assertEquals( 'Leave me alone.' , retVal );
+}
+
+
 function mockedSpyMethodShouldVerify() {
  spy.mock().foo();
  spy.foo();
@@ -21,7 +58,7 @@ function mockify() {
  spy.mock().mockMe().returns('I was mockified. My goodness.');
  retVal = spy.mockMe();
  debug(retVal);
- assertEquals( 'I was mocker. My goodness.' , retVal );
+ assertEquals( 'I was mockified. My goodness.' , retVal );
  spy.mockMe();
  spy.verifyTimes(2).mockMe();
 }
@@ -40,7 +77,7 @@ function mockify() {
   }
 
 
- function $mockedAndunmockedMethodShouldExecuteAndBeRecorded() {
+ function mockedAndunmockedMethodShouldExecuteAndBeRecorded() {
     spy.mock('possible options here').foo().returns('bar');
     spy.leaveMeAlone();
     retVal = spy.leaveMeAlone();
