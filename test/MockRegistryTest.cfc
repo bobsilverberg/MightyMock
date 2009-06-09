@@ -1,14 +1,35 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function $anyTest(){
+  var pArgs = {foo='{any}'};
+  var args = {foo='adasdasd'};
+  mr.register('foo',pArgs);
+  actual = mr.exists('foo',args);
+  assert(!actual,'should not be there');
+  debug(mr);
+  behavior = mr.findByPattern('foo',args);
+   
+}
+
+function $shouldBeAbleToAddComponentAsArgument(){
+   var dumb = createObject('component' ,dummy); 
+   var pArgs = {foo='{any}'};
+   var args = {foo=dumb};
+   mr.register('foo',pArgs);
+   actual = mr.exists('foo',args);
+   assert(!actual,'should not be there');
+   debug(mr);
+   behavior = mr.findByPattern('foo',args);
+}
 
 function $findByPatternAnyBUG(){
-  var	 pattern = {foo='{any}'};
+  var pattern = {foo='{any}'};
   var args = {foo='asd'};
   var res = mr.isPattern(pattern);
   assert(res);
 
-  mr.register('foo',args);
+  mr.register('foo',pattern);
   o = mr.findByPattern('foo',args);
   debug(o);
 }
