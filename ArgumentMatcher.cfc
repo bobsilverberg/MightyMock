@@ -49,6 +49,7 @@
      if(literal.size() && flag) return flag;
    }
 
+ //Validation ... extract method
    if( literal.size() != pattern.size() ){
      $throw('MismatchedArgumentNumberException',
             'Different number of parameters.',
@@ -65,6 +66,7 @@
    for(key in literal){
      element = literal[key];
      oArg = pattern[key];
+     if(oArg == '{any}') continue; //allow for 'ANY' type 
      argType = type(element);
      if( argType != oArg ) {
        if(isObject(element)){
@@ -84,7 +86,6 @@
 
 
 
-
 /*
   there's probably a better way to look up the type ...
 */
@@ -101,7 +102,7 @@
    if (isBinary(arg)) return '{binary}';
    if (isImage(arg)) return '{image}';
    return '{string}';
-   $throw('UnknownTypeException', 'Unknown type for #arg.toString()#');
+   $throw('UnknownTypeException', 'Unknown type for #arg.toString()#'); //probably dead code here.
   }
 	</cfscript>
 

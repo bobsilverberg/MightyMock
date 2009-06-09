@@ -12,7 +12,7 @@
 	  this.registryDataMap = {};
 	  this.argMap = {};
 
-		patterns =[
+	  patterns =[
 	  '{string}',
 	  '{any}',
 	  '{date}',
@@ -28,7 +28,7 @@
 	  '{image}',
 	  '{*}',
 	  '{+}'
-	];
+	  ];
 
 
 
@@ -40,8 +40,8 @@
     querySetCell(this.registry,'method',target);
     querySetCell(this.registry,'argid',argId(args));
     querySetCell(this.registry,'returns', '');
-  //{undefined} //changed 06-09-09 in order to allow simplified syntax
-  //for mocks (not stubs) since mocks return void
+    //{undefined} //changed 06-09-09 in order to allow simplified syntax
+    //for mocks (not stubs) since mocks return void
     querySetCell(this.registry,'throws', '{undefined}');
     querySetCell(this.registry,'time', getTickCount());
     try{
@@ -150,8 +150,13 @@
     try{
     	querySetCell(this.invocationRecord,'args', args.toString());
     }
-		catch(any e){
-      querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
+	catch(any e){
+      try{
+        querySetCell(this.invocationRecord,'args', '#getMetaData(args).name#');
+      }catch(any ae){
+        querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
+      }
+      
     }
  }
 
