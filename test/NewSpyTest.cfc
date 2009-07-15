@@ -1,8 +1,21 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function $spyShouldBeAbleToCallMockedMethods() {
+  spy.mock().mockThis('foo').returns('mocked');
+  retVal = spy.mockThis('foo');
+  debug(retVal);
+
+  other = spy.callMockThis('foo');
+  debug(other);
+  debug( spy.debugMock() );
+
+}
+
+
+
 //fix this!
-function $testSpyWithPatterns() {
+function testSpyWithPatterns() {
   spy.mock().foo('{any}');
 
   //should be in exec state

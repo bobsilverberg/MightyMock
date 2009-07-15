@@ -156,7 +156,7 @@
       }catch(any ae){
         querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
       }
-      
+
     }
  }
 
@@ -165,8 +165,8 @@
   }
 
   function reset(){
-    this.registry =  queryNew('id,type,method,argid,returns,throws,time');
-	  this.invocationRecord =  queryNew('id,time,status,pattern');
+    this.registry =  queryNew('id,type,method,argid,returns,throws,time,args');
+	  this.invocationRecord =  queryNew('id,time,status,pattern,args');
 	  this.registryDataMap={};
 	  this.argMap = {};
   }

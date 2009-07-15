@@ -49,6 +49,13 @@
 	    proxy.variables.spy = createObject('component',name);
 	    proxy.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
 	    proxy.variables.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
+
+	    //Brute force hard coding to see what's going on.'
+	    proxy.variables.MOCKTHIS = proxy.spy.MOCKTHIS;
+	    proxy.variables.PARAM2 = 'hard coded';
+      //this = proxy;
+	   // proxy.MOCKTHIS = proxy.spy.MOCKTHIS;
+
 	    return proxy;
 		 }
 		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
@@ -61,10 +68,11 @@
  function createMultipleTypeSafeMocks(name){
      var proxy = createObject('component', name);
      mocked.name = name;
-     structClear(proxy);
      proxy.snif = _$snif; //sniffer for variables scope
      proxyVars = proxy.snif();
+
      structClear(proxyVars);
+     structClear(proxy);
      proxy.variables = proxyVars;
 
 
@@ -263,7 +271,7 @@
    	 }
 		 catch(any e){
         registry.addInvocationRecord(target,args,'error-#e.type# #e.message#');
-        //_$throw(' #e.type#',e.message,e.detail);
+       // _$throw(' #e.type#',e.message,e.detail);
 		 }
    }
    else {

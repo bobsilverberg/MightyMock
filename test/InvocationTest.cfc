@@ -16,6 +16,7 @@ function wildcardRodeo() {
   fail( 'works in argument matcher, but not yet in registry' );
 
   assertEquals( mock.foo() , 'asd' );
+
   assertEquals( mock.foo(123) , 'asd' );
   assertEquals( mock.foo() ,'asd' );
   assertEquals( mock.foo(a),'asd' );
@@ -27,6 +28,7 @@ function wildcardRodeo() {
   assertEquals( mock.foo(123) , 'asd' );
   assertEquals( mock.foo(s) ,'asd' );
   assertEquals( mock.foo(a),'asd' );
+
 }
 
 function testNamedArgsException() {
@@ -45,11 +47,11 @@ function testNamedArgsException() {
 
  function canUnregisteredMockReturnNull(){
    mock.reset();
-   r1 = mock.foo().returns();
+   r1 = mock.foo();
    r2 = mock.foo();
    debug(r1);
    debug(r2);
-   fail('first call to mock.foo() retuns this. should return null. how to do that');
+
  }
 
 function $shouldThrowRegisteredException(){

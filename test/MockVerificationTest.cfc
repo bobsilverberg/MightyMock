@@ -4,7 +4,7 @@
 function howToHandlePatternVerification(){
   mock.foo('{string}').returns('asd');
   mock.foo('asd');
-  mock.verify('times',1).foo('{string}');
+  mock.verify().foo('{string}');
   //mock.verify('times',1).foo('asd');
 
   fail('Record all literal invocations and add a column for pattern id if invoked via a pattern match.');

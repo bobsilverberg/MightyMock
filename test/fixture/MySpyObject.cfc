@@ -19,4 +19,18 @@
 	<cffunction name="leaveMeAlone" access="public" output="true" returntype="Any">
 		<cfreturn 'Leave me alone.' />
 	</cffunction>
+
+  <cfscript>
+
+  function callMockThis(param1){
+      var val = mockThis(param2);
+      return val;
+  }
+
+  function mockThis(param2){
+     return arguments.param2;
+  }
+
+  </cfscript>
+
 </cfcomponent>

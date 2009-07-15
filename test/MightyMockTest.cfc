@@ -2,7 +2,7 @@
 <cfscript>
 
 function $mockShouldBeAbleToReturnOtherMock(){
-   mock2 = createObject('component','mightymock.MightyMock').init(mockery);
+   mock2 = createObject('component','mightymock.MightyMock').init(mockery,true);
    //debug(mock2);
    mock.foo('asd').returns(mock2);
    t = mock.foo('asd');
@@ -30,18 +30,18 @@ function clearOrResetMock(){
 
 
 function simpleVerifyTest(){
- mock.foo('asd').returns('asd');
+  mock.foo('asd').returns('asd');
 
- mock.foo('asd');
- mock.verifyTimes(1).foo('asd');
-
-
- mock.foo2('asd').returns('123');
- mock.foo2('asd');
- mock.verify().foo2('asd');
+  mock.foo('asd');
+  mock.verifyTimes(1).foo('asd');
 
 
- mock.verifyAtLeast(1).foo('asd');
+  mock.foo2('asd').returns('123');
+  mock.foo2('asd');
+  mock.verify().foo2('asd');
+
+
+  mock.verifyAtLeast(1).foo('asd');
 
 
   mock.foo2('asd');
@@ -54,7 +54,6 @@ function simpleVerifyTest(){
   mock.bling(a).returns(true);
   mock.bling(a);
   mock.verifyOnce().bling(a);
-
 
 }
 
@@ -84,8 +83,6 @@ function whatHappensIf(){
      fail('should not get here.');
    }
    catch(foobar e){}
-
-
  }
 
  function testInvokeMock(){
@@ -96,17 +93,16 @@ function whatHappensIf(){
 
  }
 
-  function testStubalicous(){
-  mock.foo('bar').returns( getQ() );
-  actual = mock.foo('bar');
-  debug( actual );
-  assert(1,actual.recordCount);
-
+ function testStubalicous(){
+   mock.foo('bar').returns( getQ() );
+   actual = mock.foo('bar');
+   debug( actual );
+   assert(1,actual.recordCount);
  }
 
 
   function setUp(){
-   //mock = createObject('component','mightymock.MightyMock').init('my.mock');
+    mock = createObject('component','mightymock.MightyMock').init('my.mock');
   }
 
   function tearDown(){
@@ -119,13 +115,12 @@ function whatHappensIf(){
 
 
 <cffunction name="getQ" access="private">
-  <cf_querysim>
-   logger
-   foo,bar
-	 1|2
-
-	</cf_querysim>
-	<cfreturn logger/>
+<cf_querysim>
+logger
+foo,bar
+1|2
+</cf_querysim>
+<cfreturn logger/>
 </cffunction>
 
 </cfcomponent>
