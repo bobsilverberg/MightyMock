@@ -81,6 +81,10 @@
     /*
       Record the literal reference and associated pattern.
     */
+    /*
+      see if there's a registered wildcard first'
+      findByPattern()??
+    */
     addInvocationRecord(target,args,'ok');
     return this.registryDataMap['behaviordata_' & id];
   }
@@ -119,6 +123,11 @@
     catch(coldfusion.runtime.ScopeCastException e){
      $throw(type='InvalidArgumentTypeException',message='arguments not pattern or litteral : @',detail='argType(#args.toString()#)');
     }
+  }
+
+  function isWildcardPattern(args){
+    if(args == '{+}' || args == '{*}') return true;
+    return false;
   }
 
   function isPattern(args){
@@ -201,17 +210,17 @@
 </cffunction>
 
 <cffunction name="findByPattern">
-  <cfargument name="target" type="string" />
-  <cfargument name="args" type="struct" />
-  <cfset var q = '' />
-	<cfset var lid = id(target,args) />
-	<cfset var patternArgs =  {} />
+    <cfargument name="target" type="string" />
+    <cfargument name="args" type="struct" />
+    <cfset var q = '' />
+	  <cfset var lid = id(target,args) />
+	  <cfset var patternArgs =  {} />
     <cfset var isMatch = false />
     <cfset var behavior = {} />
     <cfquery name="q" dbtype="query">
-	  select *
-	  from this.registry
-	  where type='pattern' and method = '#target#'
+		  select *
+		  from this.registry
+		  where type='pattern' and method = '#target#'
     </cfquery>
   <cfloop query="q">
     <cfset patternArgs = this.argMap[q.id] />

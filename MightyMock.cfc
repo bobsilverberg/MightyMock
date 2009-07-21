@@ -194,7 +194,9 @@
        tempMock = registry.findByPattern(target,args);
        return _$invokeMock(tempMock['target'],tempMock['args']);
       }
-      catch(MismatchedArgumentPatternException e){}
+      catch(MismatchedArgumentPatternException e){
+        //opportunity to throw...
+      }
      }
 
    //Now we try to register the mock.
