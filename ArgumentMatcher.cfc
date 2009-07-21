@@ -55,13 +55,13 @@
             'Different number of parameters.',
             'Make sure the same number of paramters are passed in.');
    }
-
-  if(literalKeyString != patternKeyString){
-  	/* the above expression is failing sometimes. argh
+//i fear this is downright wrong
+  if(literal.equals(pattern)){
+  	 /*the above expression is failing sometimes. argh*/
   	  $throw('NamedArgumentConflictException',
           'Different parameter type definition.',
           'It appears that you defined a mock using named or ordered arguments, but attempted to invoke it otherwise. Please use either named or ordered argument, but not both.');
-    */
+
     }
 
 

@@ -475,6 +475,7 @@ currentMethod = {};
 
 
 <cffunction name="_$dump">
+  <cfset var i = 0 />
   <cfloop from="1" to="#arrayLen(arguments)#" index="i">
    <cfdump var="#arguments[i]#">
   </cfloop>

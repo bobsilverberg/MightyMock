@@ -5,20 +5,20 @@ function makeCfc(){
    cfc = createObject('java', 'coldfusion.runtime.CFComponent');
    bean =  createObject('java', 'coldfusion.runtime.StructBean');
    debug(bean);
-   constructors = cfc.getClass().getConstructors(); 
+   constructors = cfc.getClass().getConstructors();
    args = [];
    debug( constructors[1] );
-   
+
    expando = constructors[1];
    expando.setAccessible(true);
-   //instance = expando.newInstance(args); 
-   
+   //instance = expando.newInstance(args);
+
 }
 
 function runMethodUsingProxy(){
   poc = createObject('component', 'PlainOldCFCNoMethods');
   proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc.echo);
-  cfcProxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);    
+  cfcProxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
   cfpage = getPageContext().getPage();
   args = {1='fu'};
   debug(cfcProxy);
@@ -27,7 +27,7 @@ function runMethodUsingProxy(){
   //proxy.invoke(java.lang.Object, java.lang.String, java.lang.Object, java.util.Map)
   retVal = proxy.invoke('', '', cfcProxy.page, args);
   debug(retVal);
-  
+
 }
 
 function addFunctionToCfc() {
@@ -37,9 +37,9 @@ function addFunctionToCfc() {
   proxy = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(poc);
   debug(proxy.toString());
   debug(proxy);
-  
+
   //debug( cfp );
-  
+
   sargs = {};
   retVal = proxy.invoke('run',sargs, getPageContext());
   assert('running'==retVal);
@@ -164,6 +164,8 @@ function peepVars(){
 
 
 function execCfcViaJava(){
+   return ; //this is killing the server
+
    jp = createObject('java' ,'coldfusion.runtime.java.JavaProxy').init(this);
 
    debug( jp.toString() );

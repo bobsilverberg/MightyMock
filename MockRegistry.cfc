@@ -141,7 +141,7 @@
 //invocation record smells like another object
  function addInvocationRecord(target,args,status){ //
     var id = id(target,args);
-    sleep(5);//ensures, fwiw, that the recorded time will be unique
+    //sleep(5);//ensures, fwiw, that the recorded time will be unique
     queryAddRow(this.invocationRecord,1);
     querySetCell(this.invocationRecord,'id',id);
     querySetCell(this.invocationRecord,'time', getTickCount());
@@ -177,6 +177,7 @@
   <cfargument name="target" type="string" />
   <cfargument name="args" type="struct" />
 	<cfset var lid = id(target,args) />
+  <cfset var q = '' />
 	<cfquery name="q" dbtype="query">
 	 select *
 	 from this.invocationRecord
@@ -190,6 +191,7 @@
   <cfargument name="target" type="string" />
   <cfargument name="args" type="struct" />
 	<cfset var lid = id(target,args) />
+  <cfset var q = '' />
 	<cfquery name="q" dbtype="query" maxrows="1">
 	 select *
 	 from this.registry
@@ -201,6 +203,7 @@
 <cffunction name="findByPattern">
   <cfargument name="target" type="string" />
   <cfargument name="args" type="struct" />
+  <cfset var q = '' />
 	<cfset var lid = id(target,args) />
 	<cfset var patternArgs =  {} />
     <cfset var isMatch = false />
@@ -231,6 +234,7 @@
 <cffunction name="getRowNum">
   <cfargument name="target" type="string" />
 	<cfargument name="args" type="struct" />
+  <cfset var q = '' />
 	<cfset var id = id(target,args)>
 	<cfset var rownum = 0 />
 	<cfquery name="q" dbtype="query">

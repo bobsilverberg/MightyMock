@@ -123,6 +123,7 @@
 
 <cffunction name="exists" returntype="boolean">
   <cfargument name="id" type="string" />
+  <cfset var q = ''>
   <cfquery name="q" dbtype="query" maxrows="1">
     select count(*) as cnt
     from invocations where id = '#id#'
@@ -132,6 +133,7 @@
 
 <cffunction name="_$query" access="private">
   <cfargument name="qs" type="string" />
+  <cfset var q = ''>
   <cfquery name="q" dbtype="query">
      #qs#
   </cfquery>
@@ -140,6 +142,7 @@
 
 <cffunction name="getInvocationTime" >
   <cfargument name="id" type="string">
+  <cfset var q = ''>
   <cfquery name="q" dbtype="query" maxrows="1">
     select [time] from invocations where id = '#id#'
   </cfquery>
