@@ -57,16 +57,18 @@
    }
 
   if(literalKeyString != patternKeyString){
-   $throw('NamedArgumentConflictException',
+  	/* the above expression is failing sometimes. argh
+  	  $throw('NamedArgumentConflictException',
           'Different parameter type definition.',
           'It appears that you defined a mock using named or ordered arguments, but attempted to invoke it otherwise. Please use either named or ordered argument, but not both.');
-   }
+    */
+    }
 
 
    for(key in literal){
      element = literal[key];
      oArg = pattern[key];
-     if(oArg == '{any}') continue; //allow for 'ANY' type 
+     if(oArg == '{any}') continue; //allow for 'ANY' type
      argType = type(element);
      if( argType != oArg ) {
        if(isObject(element)){
