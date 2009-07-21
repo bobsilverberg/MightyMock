@@ -43,10 +43,10 @@
 
    //maybe a wildcard
    if(pattern.size() == 1){
-     flag = pattern.contains('{*}');
+     flag = patternContainsWildCard( pattern,'{*}' );
      if(flag) return flag;
-     flag = pattern.contains('{+}');
-     if(literal.size() && flag) return flag;
+     flag = patternContainsWildCard( pattern,'{+}' );
+     if(literal.size() && flag) return flag; //make sure there's at least one arg
    }
 
  //Validation ... extract method
@@ -56,7 +56,8 @@
             'Make sure the same number of paramters are passed in.');
    }
 //i fear this is downright wrong
-  if(literal.equals(pattern)){
+//literal.equals(pattern)
+  if(false){
   	 /*the above expression is failing sometimes. argh*/
   	  $throw('NamedArgumentConflictException',
           'Different parameter type definition.',
@@ -77,7 +78,7 @@
        else{
         oStringVal = element.toString();
        }
-      $throw('MismatchedArgumentPatternException',
+      $throw(' MismatchedArgumentPatternException',
              'Was looking at "#key# = #oStringVal#" and trying to match it to type: #oArg.toString()#',
              'Make sure the component being mocked matches parameter patterns, e.g., struct={struct}');
      }
@@ -105,6 +106,12 @@
    if (isImage(arg)) return '{image}';
    return '{string}';
    $throw('UnknownTypeException', 'Unknown type for #arg.toString()#'); //probably dead code here.
+  }
+  
+  
+  function patternContainsWildCard(pattern, wildcard){
+    var results = structFindValue(pattern,wildcard);
+    return arrayLen(results) > 0;
   }
 	</cfscript>
 

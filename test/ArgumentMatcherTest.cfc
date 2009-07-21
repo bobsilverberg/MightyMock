@@ -14,6 +14,29 @@ function setUp(){
  matcher = createObject('component','mightymock.ArgumentMatcher');
 }
 
+function patternContainsStar(){
+  
+  var pattern = {1={1='{*}'}};
+  ret = matcher.patternContainsWildCard( pattern,'{*}' );
+  assert( ret) ;
+  
+}
+
+function patternContainsPlus(){
+  var pattern = {1={1='{+}'}};
+  ret = matcher.patternContainsWildCard( pattern,'{+}' );
+  assert( ret) ;
+}
+
+function wildCardSmokeTest(){
+  var actual = false;
+  var incomming = { 1='asd'};
+  var existing = { 1='{+}'};
+  actual = matcher.match(incomming,existing) ;
+  assert(actual,'did not match {*}');
+
+}
+
 function anyShouldMatchAllTypes(){
    var dumb = createObject('component' ,dummy); 
    var actual = false;
@@ -104,6 +127,10 @@ function findByPatternTestWithNamedArgs(){
   assert(actual,'did not match {*}');
 
   existing = { 1='{+}'};
+  actual = matcher.match(incomming,existing) ;
+  assert(actual,'did not match {+}');
+  
+  incomming = { 1='bar', 2=321654};
   actual = matcher.match(incomming,existing) ;
   assert(actual,'did not match {+}');
 }

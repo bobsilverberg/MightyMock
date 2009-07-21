@@ -1,4 +1,4 @@
-<cfcomponent output="false">
+<cfcomponent output="true">
   <cfscript>
 
 	  matcher = createObject('component','ArgumentMatcher');

@@ -1,42 +1,60 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+mainRetVal = [1,2,3,4,5,6,7,8,9];
 
-
-	function findByPatternTest() {
-     mock.foo('{+}').returns(123);
-
+function $wilcardPatternSmokeTest(){
+     mock.foo('{+}').returns(mainRetVal);
      reg = mock._$getRegistry();
-     assert( reg.isWildCardPattern('{+}') );
-
-     p = reg.findByPattern('foo','{+}');
-
-     actual = mock.foo('asd');
-     debug( mock.debugMock() );
-  }
-
-
- function makeSureWildcardRegistersOK(){
-    mock.foo('{+}').returns(123);
-   debug( mock.debugMock() );
-   //actual = mock.foo('asd');
+     args = {1={1='asdasd'}};
+     p = reg.findByPattern('foo',args);
+     debug( p );
+     debug( reg );
+     
+     v = mock.foo('asdasd');
+     debug(v);
+     assertEquals(mainRetVal,v);
+}
 
 
-    reg = mock._$getRegistry();
-		debug(reg);
-   // assert(actual);
-   // mock.verify().foo('asd');
-   args = {1='{+}'};
-   behavior = reg.GETREGISTEREDBEHAVIOR('foo',args);
-   debug(behavior);
-   data = reg.getReturnsData('foo',args);
-   debug(data);
+function emptyParamsShouldWork(){
+   mock.foo('{*}').returns(mainRetVal);
+   v = mock.foo();
+   assertEquals(mainRetVal,v);
+}
 
-  }
+function multipleParamsShouldWorkWithOneOrMoreWildCard(){
+   mock.foo('{+}').returns(mainRetVal);
+   v = mock.foo('asdasd');
+   assertEquals(mainRetVal,v);
+   v = mock.foo('asdasd',4564);
+   debug(v);
+   assertEquals(mainRetVal,v);
+   
+   v = mock.foo('asdasd',4564,'dfgdfg',345345,this);
+   debug(v);
+   assertEquals(mainRetVal,v);
+      
+}
 
 
+function multipleParamsShouldWorkWithZeroOrMoreWildCard(){
+   mock.foo('{*}').returns(mainRetVal);
+   v = mock.foo('asdasd');
+   assertEquals(mainRetVal,v);
+   v = mock.foo('asdasd',4564);
+   debug(v);
+   assertEquals(mainRetVal,v);
+   
+   v = mock.foo(mainRetVal,4564,'dfgdfg',345345,this);
+   debug(v);
+   assertEquals(mainRetVal,v);
+   debug(mock.debugMock());
+      
+}
 
-  function setUp(){
+
+ function setUp(){
     mock.reset();
 
   }
@@ -47,4 +65,5 @@
 
 
 </cfscript>
+
 </cfcomponent>
