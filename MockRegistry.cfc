@@ -1,4 +1,10 @@
 <cfcomponent output="true">
+<!---
+  You'll see target and args used throughout. target is the method name
+  and args is the struct representing the arguments. These are used
+  as unique identifiers by hashing their values.
+ --->
+
   <cfscript>
 
 	  matcher = createObject('component','ArgumentMatcher');
@@ -30,6 +36,7 @@
 	  '{+}'
 	  ];
 
+/*---------------------------------------------------------------*/
 
 
   function register(target,args){
@@ -55,6 +62,7 @@
     updateRegistry(target,args,'returns','');
  }
 
+
   function getArgumentMapEntry(target,args){
    var id = id(target,args);
    return this.argMap[id]; //where to catch undefined element exception? client?
@@ -75,18 +83,15 @@
       querySetCell(getRegistry(),column, mapId, rowNum);
       querySetCell(getRegistry(),'throws', '{undefined}', rowNum);
     }
-
-
   }
 
 
-//to do
+//to do: Record both pattern and literal (look up?)
   function getReturnsData(target,args){
     var id = id(target,args);
     addInvocationRecord(target,args,'ok');
     return this.registryDataMap['behaviordata_' & id];
   }
-
 
 
  function getRegisteredBehavior(target,args){
@@ -107,6 +112,7 @@
    return uCase(target) & '_' &  argId(args) ;
   }
 
+
   function argId(args){
     var caseInsensitiveArgs = uCase(args.toString());
     return caseInsensitiveArgs.hashCode();
@@ -123,10 +129,12 @@
     }
   }
 
+
   function isWildcardPattern(args){
     if(args == '{+}' || args == '{*}') return true;
     return false;
   }
+
 
   function isPattern(args){
 	 //iterate over	known patterns and see if value exists
@@ -157,13 +165,12 @@
     try{
     	querySetCell(this.invocationRecord,'args', args.toString());
     }
-	catch(any e){
+		catch(any e){
       try{
         querySetCell(this.invocationRecord,'args', '#getMetaData(args).name#');
       }catch(any ae){
         querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
       }
-
     }
  }
 
@@ -207,7 +214,12 @@
 	<cfreturn q>
 </cffunction>
 
-<cffunction name="findByPattern">
+
+<!---
+  This might be a good place to record or buffer the literal which
+  can be used later in the invocation record. and subsequently cleared.
+ --->
+<cffunction name="findByPattern" hint="Given a method name, looks up any assocatied patterns and returns id's of the matched pattern">
     <cfargument name="target" type="string" />
     <cfargument name="args" type="struct" />
     <cfset var q = '' />

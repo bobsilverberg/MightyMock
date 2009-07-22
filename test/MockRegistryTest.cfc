@@ -1,6 +1,16 @@
 <cfcomponent output="false" extends="BaseTest">
 <cfscript>
 
+function $addInvocationRecordForBothPatternAndLiteral() {
+		mock.reset();
+		mock.foo('{+}').returns(123);
+		mock.foo(1,2);
+		//invocation record should have 2 items
+		debug( mock.debugMock() );
+		assertEquals(2, mock._$getRegistry().invocationrecord.recordCount);
+
+ }
+
 function $anyTest(){
   var pArgs = {foo='{any}'};
   var args = {foo='adasdasd'};

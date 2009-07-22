@@ -1,3 +1,6 @@
+- Debug output should be more descriptive and readable, Raw debug data available
+  via verbose flag.
+  
 - Normalize arguments. Should be able to reasonably define a method with or
   without named arguments, and invoke it as named or positional. See
   how the engines do it.
@@ -41,7 +44,7 @@
         mock.verifyTimes(2).foo(1,2);
         mock.verifyTimes(1).foo(4,5);
    
-- verbose . maybe should persist actual literal arguments in addition to hash
+- DONE -verbose . maybe should persist actual literal arguments in addition to hash
 - 
 
 

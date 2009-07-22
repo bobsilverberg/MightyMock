@@ -139,11 +139,6 @@
  }
 
 
- function setSpy(iSpy){
-   spy = arguments.iSpy;
- }
-
-
 /*--------------------------------------------------------------------
              * * * * Behavioral Methods * * * *
 
@@ -182,7 +177,7 @@
      registry.register(target,args); //could return id
      currentMethod['name'] = target;
      currentMethod['args'] = args;
-     // what logic can we implement to simply return '' if not mocked? AND
+     // what logic can we implement to simply return '' if not mocked? _AND_
      // implement chaining?
      return this;
    }
