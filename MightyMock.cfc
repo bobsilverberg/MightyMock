@@ -40,30 +40,6 @@
  }
 
 
- // Keeps all methods in component. delegates mocked method calls
- // to MightyMock
- function createSpy(name){
-   try{
-	    proxy = createMultipleTypeSafeMocks(name);
-	    proxy.spy = createObject('component',name);
-	    proxy.variables.spy = createObject('component',name);
-	    proxy.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
-	    proxy.variables.ONMISSINGMETHOD = _$SPYONMISSINGMETHOD;
-
-	    //Brute force hard coding to see what's going on.'
-	    proxy.variables.MOCKTHIS = proxy.spy.MOCKTHIS;
-	    proxy.variables.PARAM2 = 'hard coded';
-      //this = proxy;
-	   // proxy.MOCKTHIS = proxy.spy.MOCKTHIS;
-
-	    return proxy;
-		 }
-		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
-		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
-	 }
-
- }
-
  //Clears all methods in object to be mocked.
  function createMultipleTypeSafeMocks(name){
      var proxy = createObject('component', name);
@@ -195,7 +171,9 @@
        return _$invokeMock(tempMock['target'],tempMock['args']);
       }
       catch(MismatchedArgumentPatternException e){
-        //opportunity to throw...
+       // If we get here, it's because we're registering the method
+       // the first time
+       //_$rethrow(e);
       }
      }
 
@@ -227,70 +205,6 @@
 
 //--------------------------------------------------------------------------------------//
 
-/*-------------------------------------------------------------------
-             * * * * Behavioral Methods * * * *
-
-       				Main entry point for Partia Mocks.
-
--------------------------------------------------------------------*/
-
- function _$spyOnMissingMethod(target,args) {
-   //we know it's a spy, so no need for conditional
-   var spyMethod = '';
-   var retVal = '';
-   var tempMock = '';
-  // _$dump('how do we know when to execute and when to register? A:when target == mock');
-    _$dump(target,args,currentstate);
-
-   if( currentState == 'verifying'){
-      verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
-      _$setState('idle');
-      return this;
-   }
-
-   if(currentState == 'registering'){  //user did mock.mockSpy() to prevent execution
-	   registry.register(target,args);
-	   currentMethod['name'] = target;
-	   currentMethod['args'] = args;
-	   _$setState('idle');
-	   return this;
-   }
-
-   if(!registry.exists(target,args)) {
-     _$dump(registry,'temp spy');
-  	 // tempSpy = registry.findByPattern(target,args);
-
-
-
-     try{
-       spyMethod = spy[target];
-       //setVariable(target,spy[target]);
-   	   //need to capture the method being invoked else "spyMethod" is printed to stacktrace
-   	   retVal = spyMethod(args);
-   	   registry.addInvocationRecord(target,args,'ok');
-			 if(!isDefined('retVal')) return;
-   	   return retVal;
-   	 }
-		 catch(any e){
-        registry.addInvocationRecord(target,args,'error-#e.type# #e.message#');
-       // _$throw(' #e.type#',e.message,e.detail);
-		 }
-   }
-   else {
-   	 //maybe handle patterns here?!
-   	 try{
-   	   retVal = _$invokeMock(target,args);
-   	   return retVal;
-   	 }
-		 catch(any e){
-       registry.addInvocationRecord(target,args,'error-#e.type#');
-       _$throw(' #e.type#',e.message,e.detail);
-		 }
-   }
-
-   return this;
-
- } //end spy onMissingMethod
 
 
 
@@ -490,6 +404,10 @@ currentMethod = {};
   <cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#" />
 </cffunction>
 
+<cffunction name="_$rethrow">
+	<cfargument name="e" >
+  <cfthrow object="#e#" />
+</cffunction>
 
 
 </cfcomponent>

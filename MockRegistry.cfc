@@ -65,26 +65,24 @@
     var rowNum = getRowNum(target,args);
     var id = id(target,args);
     var mapId = 'behaviordata_' & id;
-
-    //  used to check for value.toString() == '{undefined}' ... forget why. doh!
-    //  maybe to control how returns behaves. maybe it should just return null
-    //  if not mocked?
     this.registryDataMap[mapId] = value;
-    querySetCell(getRegistry(),column, mapId, rowNum);
+    //mr.updateRegistry('foo',args,'throws', 'myexception');
+    if(column == 'throws'){
+      querySetCell(getRegistry(),column, mapId, rowNum);
+      querySetCell(getRegistry(),'returns', '', rowNum);
+    }
+    else {
+      querySetCell(getRegistry(),column, mapId, rowNum);
+      querySetCell(getRegistry(),'throws', '{undefined}', rowNum);
+    }
+
 
   }
 
 
+//to do
   function getReturnsData(target,args){
     var id = id(target,args);
-    //To Do: !!
-    /*
-      Record the literal reference and associated pattern.
-    */
-    /*
-      see if there's a registered wildcard first'
-      findByPattern()??
-    */
     addInvocationRecord(target,args,'ok');
     return this.registryDataMap['behaviordata_' & id];
   }
@@ -93,7 +91,7 @@
 
  function getRegisteredBehavior(target,args){
   	var mock = findMock(target,args);
-  	if (mock.returns != '{undefined}') return 'returns';
+  	if (mock.returns != '') return 'returns';
   	if (mock.throws != '{undefined}') return 'throws';
   	$throw('UnmockedBehaviorException',' "#target#(...)" has not been mocked.',' This happens when you attempt to execute a object.method() that has not been mocked. Make sure you specify returns or throws behavior for this method.');
   }

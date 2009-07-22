@@ -11,7 +11,7 @@
     dummy = 'mightymock.test.fixture.Dummy';
     mockery = 'mightymock.test.fixture.Mockery';
     mock = createObject('component','mightymock.MightyMock').init();
-
+    s = {a=123,b='asd'};
 
     mockFactory = createObject('component','mightymock.MightyMockFactory').init();
     $ = mockFactory.create; //jQuery-like alias for multi-mock creation

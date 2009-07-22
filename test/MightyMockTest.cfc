@@ -59,16 +59,7 @@ function simpleVerifyTest(){
 
 
 
-function whatHappensIf(){
- mock.foo('asd');
- debug( mock._$debugReg() );
- try{
-  f = mock.foo('asd');
-  fail('should not get here');
- }
- catch(UndefinedBehaviorException e){}
 
-}
 
  function testRegisterNewMock(){
   mock.foo('bar').returns('foo');

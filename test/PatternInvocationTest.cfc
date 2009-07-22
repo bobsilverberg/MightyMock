@@ -10,7 +10,7 @@
 
  }
 
- function peepWildCardPatternExec(){
+ function shouldBeAbleToVerifyBothePatternAndLiteral(){
     mock.foo('{+}').returns(true);
     actual = mock.foo('asd');
 

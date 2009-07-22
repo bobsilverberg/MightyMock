@@ -36,7 +36,8 @@
      foo.setBar('i see the light').returns(bar);
      foo.asd(bar).returns('asd');
      b = foo.getBar().returns(bar);
-     assertIsTypeOf(b,'bar');
+    // only valid when creating type-safe mocks
+    // assertIsTypeOf(b,'bar');
      debug(b);
      debug(foo.debugMock());
      debug(bar.debugMock());
@@ -67,7 +68,7 @@
      logMessage = 'messy bed; messy head';
      mmFactory = createObject('component','mightymock.MightyMockFactory');
      //jQuery-like alias - makes is cleaner, imo.
-     $ = mmFactory.create; 
+     $ = mmFactory.create;
 
      esapi            = $('org.owasp.esapi.ESAPI');
      sessionFacade    = $('org.owasp.esapi.SessionFacade');
@@ -75,12 +76,12 @@
      securityConfig   = $('org.owasp.esapi.SecurityConfiguration');
      encoder          = $('org.owasp.esapi.Encoder');
      user             = $('org.owasp.esapi.User');
-    
+
      //define behaviours
      esapi.setSecurityConfiguration(securityConfig).returns();
-     esapi.securityConfiguration().returns(securityConfig); 
+     esapi.securityConfiguration().returns(securityConfig);
 
-     esapi.setSessionFacade(sessionFacade).returns();   
+     esapi.setSessionFacade(sessionFacade).returns();
      esapi.sessionFacade().returns(sessionFacade);
 
      esapi.setEncoder(encoder).returns();
@@ -93,12 +94,12 @@
 
      securityConfig.getProperty('LogEncodingRequired').returns(false);
      sessionFacade.getProperty("loggingID").returns(uuid);
-     
+
      authenticator.setCurrentUser(user).returns();
      authenticator.getCurrentUser().returns(user);
      user.getUserName().returns('the_mighty_mock');
      user.getLastHostAddress().returns('127.0.0.1');
-     
+
      //inject mock into mock; aka, mock acrobatics
      esapi.setEncoder(encoder);
      esapi.setSessionFacade(sessionFacade);
@@ -107,10 +108,10 @@
      //instantiate CUT
      logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','debug',esapi);
      logger.setLevel('trace');
-     
+
      //exercise method
      logger.trace(logMessage) ;
-    
+
 
      //Not a whole lot of verification. Just wanted the mock to work.
      esapi.verify().sessionFacade();
@@ -129,7 +130,7 @@
      uuid = createUUID();
      esapi = $('org.owasp.esapi.ESAPI');
      sessionFacade = $('org.owasp.esapi.SessionFacade');
-     
+
      sessionFacade.getProperty("loggingID").returns(uuid);
 
      esapi.setSessionFacade(sessionFacade).returns();
@@ -139,15 +140,15 @@
      //sf = esapi.sessionFacade();
      //debug(sf);
 
-    // 
+    //
     logger = createObject('component','mightymock.test.fixture.Logger').init('mylogger','warn',esapi);
-    result = logger.logTest('trace me') ;    
+    result = logger.logTest('trace me') ;
     assertEquals( uuid,result );
-   
+
      /* debug(logger);
        r = logger.trace('trace me') ;    debug( isdefined('r'));
-     */     
- 
+     */
+
      debug(esapi.debugMock());
      debug(sessionFacade.debugMock());
 

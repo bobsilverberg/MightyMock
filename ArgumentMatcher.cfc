@@ -78,7 +78,7 @@
        else{
         oStringVal = element.toString();
        }
-      $throw(' MismatchedArgumentPatternException',
+      $throw('MismatchedArgumentPatternException',
              'Was looking at "#key# = #oStringVal#" and trying to match it to type: #oArg.toString()#',
              'Make sure the component being mocked matches parameter patterns, e.g., struct={struct}');
      }
@@ -107,8 +107,8 @@
    return '{string}';
    $throw('UnknownTypeException', 'Unknown type for #arg.toString()#'); //probably dead code here.
   }
-  
-  
+
+
   function patternContainsWildCard(pattern, wildcard){
     var results = structFindValue(pattern,wildcard);
     return arrayLen(results) > 0;

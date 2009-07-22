@@ -1,5 +1,12 @@
-- mock should creat a light-weight, "fast" (empty) mock, a type safe mock, and a
-  partial mock (or spy).
+- Normalize arguments. Should be able to reasonably define a method with or
+  without named arguments, and invoke it as named or positional. See
+  how the engines do it.
+
+- add invocation record for both pattern and literal that were executed. This
+  should allow verification of either.
+
+- mock should create a light-weight, "fast" (empty) mock, a type safe mock, and 
+ a partial mock (or spy).
   -- do not alter meta data, instead, set property.
       maybe need to proxy the onmissing method to new empty object and pass that
       around and not the MightyMock. Maybe need to delegate all request to some

@@ -1,10 +1,11 @@
 <cfcomponent output="false" extends="BaseTest">
 
- <cffunction name="mismatchedArgumentTypesShouldFail" mxunit:expectedException="NamedArgumentConflictException">
+<!--- Argument Normalization is on the todo list --->
+ <cffunction name="mismatchedArgumentTypesShouldPass">
  <cfscript>
   mock.reset();
   mock.foo(bar='{string}').returns('bar');
-  mock.foo('asdasdasdasd') == 'bar' ;
+  assert(mock.foo('asdasdasdasd') == 'bar') ;
   </cfscript>
 </cffunction>
 
@@ -12,8 +13,6 @@
 
 function wildcardRodeo() {
   mock.foo('{*}').returns('asd');
-
-  fail( 'works in argument matcher, but not yet in registry' );
 
   assertEquals( mock.foo() , 'asd' );
 
@@ -56,11 +55,14 @@ function testNamedArgsException() {
 
 function $shouldThrowRegisteredException(){
   mock.foo(1).throws('YouSuckAtUnitTestingException');
+  debug( mock.debugMock() );
   try{
-    mock.foo(1);
+   res = mock.foo(1);
+    debug(res);
     fail('should not get here');
    }
    catch(YouSuckAtUnitTestingException e){
+    debug(e);
    }
 }
 
@@ -69,9 +71,9 @@ function $shouldThrowRegisteredException(){
 function attemptingToRegisterTheSamePatternShouldThrowMeaningfulException(){
   try{
    mock.foo(1).returns(1);
+   //mock.reset(); resetting the mock clears it
    mock.foo(1).returns(2);
-   asd = 'asdasd';
-   asd.returns(1);
+   debug( mock.debugMock() );
   }
   catch(coldfusion.runtime.java.MethodSelectionException e){
   fail('
@@ -150,6 +152,7 @@ function  doMock(){
   mock.foo('asd').returns(a);
   actual = mock.foo('asd');
   debug(actual);
+  assertEquals(4,actual.size());
 }
 
 
@@ -161,7 +164,7 @@ function  doMockMoo(){
   actual = mock.foo('ghjghj');
   debug(actual);
 
-  mock.foo(1);
+   mock.foo(1);
   mock.returns();
   actual = mock.foo(1);
   debug(actual);
@@ -212,7 +215,8 @@ function tearDown(){
 }
 
 function setUp(){
-  mock = createObject('component','mightymock.MightyMock');
+  mock = createObject('component','mightymock.MightyMock').init();
+  mock.reset();
   reg = mock._$getRegistry();
   mr = createObject('component','mightymock.MockRegistry');
 }

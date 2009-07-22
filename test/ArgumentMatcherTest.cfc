@@ -1,10 +1,12 @@
 <cfcomponent output="false" extends="BaseTest">
 
-<cffunction name="mismatchedArgumentTypesShouldFail" mxunit:expectedException="NamedArgumentConflictException">
+<cffunction name="mismatchedArgumentTypesShouldFail" >
  <cfscript>
+
   var literal = { foo='bar', bar=321654};
-  var pattern = { 1='{string}', 2='{numeric}'};
-  matcher.match(literal,pattern);
+  var pattern = { foo='{string}', bar='{numeric}'};
+  assert( matcher.match(literal,pattern) );
+  fail('To Do: normalize arguments');
   </cfscript>
 </cffunction>
 
@@ -15,11 +17,11 @@ function setUp(){
 }
 
 function patternContainsStar(){
-  
+
   var pattern = {1={1='{*}'}};
   ret = matcher.patternContainsWildCard( pattern,'{*}' );
   assert( ret) ;
-  
+
 }
 
 function patternContainsPlus(){
@@ -38,16 +40,16 @@ function wildCardSmokeTest(){
 }
 
 function anyShouldMatchAllTypes(){
-   var dumb = createObject('component' ,dummy); 
+   var dumb = createObject('component' ,dummy);
    var actual = false;
    var literal = { 1='bar', 2=321654};
    var pattern = { 1='{any}', 2='{any}'};
-   
+
    literal = { 1='bar', 2=dumb};
    pattern = { 1='{any}', 2='{any}'};
    actual = matcher.match(literal,pattern) ;
    assert(actual,'did not match #pattern.toString()#');
-   
+
    actual = matcher.match(literal,pattern) ;
    assert(actual,'did not match #pattern.toString()#');
 
@@ -129,7 +131,7 @@ function findByPatternTestWithNamedArgs(){
   existing = { 1='{+}'};
   actual = matcher.match(incomming,existing) ;
   assert(actual,'did not match {+}');
-  
+
   incomming = { 1='bar', 2=321654};
   actual = matcher.match(incomming,existing) ;
   assert(actual,'did not match {+}');
