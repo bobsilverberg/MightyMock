@@ -70,7 +70,7 @@
      element = literal[key];
      oArg = pattern[key];
      if(oArg == '{any}') continue; //allow for 'ANY' type
-     argType = xtype(element);
+     argType = getArgumentType(element);
      if( argType != oArg ) {
        if(isObject(element)){
         oStringVal = 'cfc or java class';
@@ -92,7 +92,7 @@
 /*
   there's probably a better way to look up the type ...
 */
-  function xtype(arg){
+  function getArgumentType(arg){
    if (isDate(arg)) return '{date}';
    if (isObject(arg)) return '{object}';
    if (isStruct(arg)) return '{struct}';

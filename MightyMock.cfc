@@ -99,8 +99,6 @@
 			proxy.variables.PREVIOUSSTATE = PREVIOUSSTATE;
 			proxy.VERIFYNEVER = VERIFYNEVER;
 			proxy.variables.VERIFYNEVER = VERIFYNEVER;
-			proxy._$GETSPY =_$GETSPY;
-			proxy.variables._$GETSPY =_$GETSPY;
 			proxy.variables.TEMPRULE =TEMPRULE;
 			proxy.variables.CURRENTSTATE = variables.CURRENTSTATE;
 			proxy._$DEBUGREG = _$DEBUGREG ;
