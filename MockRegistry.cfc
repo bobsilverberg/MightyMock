@@ -13,8 +13,8 @@
       matcher = arguments.m;
 	  }
 
-	  this.registry =  queryNew('id,type,method,argid,returns,throws,time,args');
-	  this.invocationRecord =  queryNew('id,time,status,pattern,args');
+	  this.registry =  queryNew('id,type,method,argid,returns,throws,time,missingMethodArguments');
+	  this.invocationRecord =  queryNew('id,time,status,pattern,missingMethodArguments');
 	  this.registryDataMap = {};
 	  this.argMap = {};
 
@@ -52,10 +52,10 @@
     querySetCell(this.registry,'throws', '{undefined}');
     querySetCell(this.registry,'time', getTickCount());
     try{
-    	querySetCell(this.registry,'args', args.toString());
+    	querySetCell(this.registry,'missingMethodArguments', args.toString());
     }
 		catch(any e){
-      querySetCell(this.registry,'args', 'Component or Object. Cannot convert to String');
+      querySetCell(this.registry,'missingMethodArguments', 'Component or Object. Cannot convert to String');
     }
     this.argMap[id] = args;
     //sets default behavior to null
@@ -163,13 +163,13 @@
     querySetCell(this.invocationRecord,'status',status);
     querySetCell(this.invocationRecord,'pattern','');
     try{
-    	querySetCell(this.invocationRecord,'args', args.toString());
+    	querySetCell(this.invocationRecord,'missingMethodArguments', args.toString());
     }
 		catch(any e){
       try{
-        querySetCell(this.invocationRecord,'args', '#getMetaData(args).name#');
+        querySetCell(this.invocationRecord,'missingMethodArguments', '#getMetaData(args).name#');
       }catch(any ae){
-        querySetCell(this.invocationRecord,'args', 'Component or Object. Cannot convert to String');
+        querySetCell(this.invocationRecord,'missingMethodArguments', 'Component or Object. Cannot convert to String');
       }
     }
  }
@@ -179,8 +179,8 @@
   }
 
   function reset(){
-    this.registry =  queryNew('id,type,method,argid,returns,throws,time,args');
-	  this.invocationRecord =  queryNew('id,time,status,pattern,args');
+    this.registry =  queryNew('id,type,method,argid,returns,throws,time,missingMethodArguments');
+	  this.invocationRecord =  queryNew('id,time,status,pattern,missingMethodArguments');
 	  this.registryDataMap={};
 	  this.argMap = {};
   }
@@ -237,8 +237,8 @@
     <cftry>
       <cfset isMatch = matcher.match(args,patternArgs) />
       <cfif isMatch>
-       <cfset behavior['target'] = q.method />
-       <cfset behavior['args']   = patternArgs />
+       <cfset behavior['missingMethodName'] = q.method />
+       <cfset behavior['missingMethodArguments']   = patternArgs />
        <cfreturn behavior />
       </cfif>
       <cfcatch type="MismatchedArgumentNumberException"></cfcatch>

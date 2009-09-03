@@ -75,7 +75,7 @@
 
 */
 
-     	proxy.RETURNS = RETURNS ;
+     		proxy.RETURNS = RETURNS ;
 			proxy._$SETSTATE = _$SETSTATE;
 			proxy.variables._$SETSTATE = _$SETSTATE;
 			proxy.DEBUGMOCK =  DEBUGMOCK;
@@ -102,8 +102,6 @@
 			proxy._$GETSPY =_$GETSPY;
 			proxy.variables._$GETSPY =_$GETSPY;
 			proxy.variables.TEMPRULE =TEMPRULE;
-			proxy.SETSPY=SETSPY;
-			proxy.variables.SETSPY=SETSPY;
 			proxy.variables.CURRENTSTATE = variables.CURRENTSTATE;
 			proxy._$DEBUGREG = _$DEBUGREG ;
 			proxy.variables._$DEBUGREG = _$DEBUGREG;
@@ -142,28 +140,28 @@
 /*--------------------------------------------------------------------
              * * * * Behavioral Methods * * * *
 
-       								Main entry points.
+       				Main entry points.
 
 --------------------------------------------------------------------*/
 
- function onMissingMethod(target,args){
+ function onMissingMethod(missingMethodName,missingMethodArguments){
    var tempMock = chr(0);
    var temp = '';
 
    if( currentState == 'verifying'){
-      verifier.doVerify(tempRule[1], target, args, tempRule[2], registry );
+      verifier.doVerify(tempRule[1], missingMethodName, missingMethodArguments, tempRule[2], registry );
       _$setState('idle');
       return this;
    }
 
-   else if(!registry.exists(target,args)) {
+   else if(!registry.exists(missingMethodName,missingMethodArguments)) {
 
-     if (!registry.isPattern(args)){ //pee-yew!
+     if (!registry.isPattern(missingMethodArguments)){ //pee-yew!
       try{
        //To Do: record the literal and invoke pattern behavior
        //Record both if they exist. This will help for lookups
-       tempMock = registry.findByPattern(target,args);
-       return _$invokeMock(tempMock['target'],tempMock['args']);
+       tempMock = registry.findByPattern(missingMethodName,missingMethodArguments);
+       return _$invokeMock(tempMock['missingMethodName'],tempMock['missingMethodArguments']);
       }
       catch(MismatchedArgumentPatternException e){
        // If we get here, it's because we're registering the method
@@ -174,9 +172,9 @@
 
    //Now we try to register the mock.
      _$setState('registering');
-     registry.register(target,args); //could return id
-     currentMethod['name'] = target;
-     currentMethod['args'] = args;
+     registry.register(missingMethodName,missingMethodArguments); //could return id
+     currentMethod['name'] = missingMethodName;
+     currentMethod['missingMethodArguments'] = missingMethodArguments;
      // what logic can we implement to simply return '' if not mocked? _AND_
      // implement chaining?
      return this;
@@ -186,7 +184,7 @@
     _$setState('executing');
     currentMethod = {};
     try{
-     retval = _$invokeMock(target,args);
+     retval = _$invokeMock(missingMethodName,missingMethodArguments);
     }
     catch(UnmockedBehaviorException e){
       retval = chr(0);
@@ -213,12 +211,12 @@
    var arg = '';
    _$setState('idle');
    if( arguments.size() ) arg = arguments[1];
-   registry.updateRegistry(currentMethod['name'],currentMethod['args'],'returns',arg);
+   registry.updateRegistry(currentMethod['name'],currentMethod['missingMethodArguments'],'returns',arg);
    return this;
   }
 
   function throws(type){
-   registry.updateRegistry(currentMethod['name'],currentMethod['args'],'throws',type);
+   registry.updateRegistry(currentMethod['name'],currentMethod['missingMethodArguments'],'throws',type);
    return this;
   }
 

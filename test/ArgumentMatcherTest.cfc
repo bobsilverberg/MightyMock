@@ -236,7 +236,7 @@ function $matchOrderedArgsShouldWork(){
    structInsert(incomming, 7, q);
    structInsert(existing, 7 ,'{query}');
 
-   debug( matcher.type( incomming['7'] ) );
+   //debug( matcher.type( incomming['7'] ) );
 
    actual = matcher.match(incomming,existing) ;
 
