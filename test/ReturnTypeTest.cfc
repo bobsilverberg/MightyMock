@@ -22,9 +22,20 @@ function testThatInitIsCallingCreateTypeSafeMocks(){
 
 }
 
-function testCreateMultiplTypeSafeMocks(){
-  mymock =  createObject('component','mightymock.MightyMock').createMultipleTypeSafeMocks(dummy);
-  mymock2 =  createObject('component','mightymock.MightyMock').createMultipleTypeSafeMocks(mockery);
+function testCreateTypeSafeMock(){
+  mymock =  createObject('component','mightymock.MightyMock').createTypeSafeMock(dummy);
+  mymock2 =  createObject('component','mightymock.MightyMock').createTypeSafeMock(mockery);
+  assertIsTypeOf(mymock, 'mightymock.test.fixture.Dummy');
+  assertIsTypeOf(mymock2, 'mightymock.test.fixture.Mockery');
+  assertIsTypeOf(mock, 'mightymock.test.fixture.Dummy');
+
+}
+
+function testCreateTypeSafeMockWithObject(){
+  dummy =  createObject('component',dummy);
+  mockery =  createObject('component',mockery);
+  mymock =  createObject('component','mightymock.MightyMock').createTypeSafeMock(dummy);
+  mymock2 =  createObject('component','mightymock.MightyMock').createTypeSafeMock(mockery);
   assertIsTypeOf(mymock, 'mightymock.test.fixture.Dummy');
   assertIsTypeOf(mymock2, 'mightymock.test.fixture.Mockery');
   assertIsTypeOf(mock, 'mightymock.test.fixture.Dummy');

@@ -22,28 +22,35 @@
    };
 
    if( arguments.size() eq 1){
-     mocked.name = arguments[1];
-     return this;
+	 if (isObject(arguments[1])) {
+		return createTypeSafeMock(arguments[1]);
+	 } else {
+	    mocked.name = arguments[1];
+	    return this;
+	 }
    }
 
    /*
-     Make multiple type safe mocks.
+     Make a type safe mock.
    */
    if( arguments.size() eq 2 ) {
-	   try{
-	    return createMultipleTypeSafeMocks(arguments[1]);
-		 }
-		 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
-		     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
-		 }
+	    return createTypeSafeMock(arguments[1]);
   }
  }
 
 
  //Clears all methods in object to be mocked.
- function createMultipleTypeSafeMocks(name){
-     var proxy = createObject('component', name);
-     mocked.name = name;
+ function createTypeSafeMock(mockee){
+     var proxy = 0;
+	try{
+	 if (not IsObject(mockee)) {
+	 	proxy = createObject('component', mockee);
+     	mocked.name = mockee;
+	 } else {
+	 	proxy = mockee;
+      	mocked.name = getMetaData(mockee).name;
+	 }
+	 
      proxy.snif = _$snif; //sniffer for variables scope
      proxyVars = proxy.snif();
 
@@ -131,6 +138,10 @@
 			proxy.variables._$DUMP = _$DUMP;
 
      return proxy;
+	 }
+	 catch (coldfusion.runtime.CfJspPage$NoSuchTemplateException e){
+	     _$throw('InvalidMockException',e.getMessage(),e.getDetail());
+	 }
 
  }
 
